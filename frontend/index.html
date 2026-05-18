@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MedAssist AI – Clinical Decision Support</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #040d18;
+    --surface: #071628;
+    --surface2: #0a1f35;
+    --border: #112240;
+    --teal: #00d4c8;
+    --teal2: #00a89e;
+    --gold: #f0c060;
+    --red: #ff5555;
+    --green: #50fa7b;
+    --text: #ccd6f6;
+    --muted: #8892b0;
+    --white: #e6f1ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; display: flex; height: 100vh; overflow: hidden; }
+
+  /* SIDEBAR */
+  .sidebar { width: 240px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 0; flex-shrink: 0; }
+  .logo-area { padding: 24px 20px 20px; border-bottom: 1px solid var(--border); }
+  .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--teal), #0099cc); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 10px; }
+  .logo-name { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--white); }
+  .logo-name span { color: var(--teal); }
+  .logo-sub { font-size: 10px; color: var(--muted); letter-spacing: 2px; margin-top: 2px; }
+  .nav-section { padding: 16px 12px 8px; }
+  .nav-label { font-size: 10px; color: var(--muted); letter-spacing: 2px; padding: 0 8px; margin-bottom: 6px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--muted); transition: all 0.2s; margin-bottom: 2px; }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: rgba(0,212,200,0.1); color: var(--teal); }
+  .nav-item .badge { margin-left: auto; font-size: 9px; padding: 2px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; }
+  .badge-teal { background: rgba(0,212,200,0.2); color: var(--teal); }
+  .badge-gold { background: rgba(240,192,96,0.2); color: var(--gold); }
+  .badge-blue { background: rgba(100,149,237,0.2); color: cornflowerblue; }
+  .sidebar-footer { margin-top: auto; padding: 16px; border-top: 1px solid var(--border); }
+  .status-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; display: inline-block; margin-right: 6px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .status-text { font-size: 11px; color: var(--muted); }
+
+  /* MAIN */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .topbar { padding: 16px 28px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--surface); }
+  .page-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--white); }
+  .page-title span { color: var(--teal); font-style: italic; }
+  .tag-row { display: flex; gap: 8px; }
+  .tag { font-size: 10px; padding: 3px 10px; border-radius: 20px; border: 1px solid; font-family: 'JetBrains Mono', monospace; }
+  .tag-teal { border-color: var(--teal); color: var(--teal); }
+  .tag-gold { border-color: var(--gold); color: var(--gold); }
+  .clinician-badge { font-size: 11px; padding: 5px 12px; background: rgba(240,192,96,0.1); border: 1px solid rgba(240,192,96,0.3); border-radius: 20px; color: var(--gold); }
+
+  /* PAGES */
+  .page { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+  .page.active { display: flex; }
+
+  /* CHAT PAGE */
+  .chat-messages { flex: 1; overflow-y: auto; padding: 24px 28px; display: flex; flex-direction: column; gap: 16px; }
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  .msg { display: flex; gap: 12px; max-width: 80%; }
+  .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+  .msg-avatar { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .msg-avatar.ai { background: linear-gradient(135deg, var(--teal), #0099cc); }
+  .msg-avatar.user { background: var(--surface2); border: 1px solid var(--border); }
+  .msg-bubble { padding: 12px 16px; border-radius: 12px; font-size: 13.5px; line-height: 1.65; }
+  .msg.ai .msg-bubble { background: var(--surface2); border: 1px solid var(--border); color: var(--text); }
+  .msg.user .msg-bubble { background: rgba(0,212,200,0.12); border: 1px solid rgba(0,212,200,0.25); color: var(--white); }
+  .msg-bubble strong { color: var(--white); }
+  .msg-bubble .source-chip { display: inline-block; font-size: 10px; padding: 2px 8px; background: rgba(0,212,200,0.1); border: 1px solid rgba(0,212,200,0.3); border-radius: 4px; color: var(--teal); font-family: 'JetBrains Mono', monospace; margin: 4px 3px 0 0; }
+  .typing { display: flex; align-items: center; gap: 4px; padding: 12px 16px; }
+  .typing span { width: 6px; height: 6px; background: var(--teal); border-radius: 50%; animation: bounce 1.2s infinite; }
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-8px)} }
+
+  .chat-input-area { padding: 16px 28px; border-top: 1px solid var(--border); background: var(--surface); }
+  .quick-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .quick-btn { font-size: 11.5px; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface2); color: var(--muted); cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+  .quick-btn:hover { border-color: var(--teal); color: var(--teal); }
+  .input-row { display: flex; gap: 10px; }
+  .chat-input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 11px 16px; color: var(--white); font-size: 13.5px; font-family: 'DM Sans', sans-serif; outline: none; transition: border 0.2s; }
+  .chat-input:focus { border-color: var(--teal); }
+  .send-btn { width: 44px; height: 44px; background: var(--teal); border: none; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .send-btn:hover { background: var(--teal2); }
+  .send-btn svg { width: 18px; height: 18px; fill: var(--bg); }
+
+  /* RISK PAGE */
+  .risk-content { flex: 1; overflow-y: auto; padding: 28px; }
+  .risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 900px; }
+  .risk-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .risk-card h3 { font-size: 13px; color: var(--muted); margin-bottom: 16px; letter-spacing: 1px; text-transform: uppercase; }
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: 11.5px; color: var(--muted); margin-bottom: 5px; display: block; }
+  .form-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px; color: var(--white); font-size: 13px; font-family: 'DM Sans', sans-serif; outline: none; }
+  .form-input:focus { border-color: var(--teal); }
+  .form-select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px; color: var(--white); font-size: 13px; font-family: 'DM Sans', sans-serif; outline: none; }
+  .btn-primary { width: 100%; padding: 11px; background: var(--teal); border: none; border-radius: 8px; color: var(--bg); font-size: 13.5px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.2s; margin-top: 4px; }
+  .btn-primary:hover { background: var(--teal2); }
+  .btn-secondary { width: 100%; padding: 11px; background: transparent; border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; margin-top: 8px; }
+  .btn-secondary:hover { border-color: var(--teal); color: var(--teal); }
+  .risk-result { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-top: 20px; max-width: 900px; display: none; }
+  .risk-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+  .risk-high { background: rgba(255,85,85,0.15); border: 1px solid rgba(255,85,85,0.4); color: var(--red); }
+  .risk-medium { background: rgba(240,192,96,0.15); border: 1px solid rgba(240,192,96,0.4); color: var(--gold); }
+  .risk-low { background: rgba(80,250,123,0.15); border: 1px solid rgba(80,250,123,0.4); color: var(--green); }
+
+  /* NOTES PAGE */
+  .notes-content { flex: 1; overflow-y: auto; padding: 28px; }
+  .notes-tabs { display: flex; gap: 4px; margin-bottom: 20px; }
+  .notes-tab { padding: 8px 20px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; transition: all 0.2s; }
+  .notes-tab.active { background: rgba(0,212,200,0.1); border-color: var(--teal); color: var(--teal); }
+  .notes-form { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; max-width: 800px; }
+  .notes-textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; color: var(--white); font-size: 13px; font-family: 'DM Sans', sans-serif; outline: none; resize: vertical; min-height: 80px; }
+  .notes-textarea:focus { border-color: var(--teal); }
+  .notes-output { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-top: 16px; font-size: 13px; line-height: 1.7; white-space: pre-wrap; display: none; color: var(--text); min-height: 100px; }
+
+  /* APPOINTMENTS PAGE */
+  .appt-content { flex: 1; overflow-y: auto; padding: 28px; }
+  .appt-form { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; max-width: 600px; }
+  .appt-result { background: var(--surface2); border: 1px solid rgba(0,212,200,0.3); border-radius: 10px; padding: 16px; margin-top: 16px; display: none; color: var(--text); font-size: 13px; line-height: 1.65; }
+
+  /* DASHBOARD */
+  .dash-content { flex: 1; overflow-y: auto; padding: 28px; }
+  .stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 28px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .stat-num { font-family: 'DM Serif Display', serif; font-size: 32px; color: var(--white); }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .stat-sub { font-size: 10px; color: var(--teal); margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+  .arch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .arch-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .arch-card h3 { font-size: 14px; color: var(--text); margin-bottom: 16px; }
+  .arch-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px; background: var(--surface2); border-radius: 8px; margin-bottom: 8px; }
+  .arch-icon { font-size: 20px; }
+  .arch-title { font-size: 13px; color: var(--white); font-weight: 500; }
+  .arch-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .quick-actions { display: flex; flex-direction: column; gap: 10px; }
+  .qa-btn { padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; text-align: left; transition: all 0.2s; }
+  .qa-btn:first-child { background: var(--teal); border-color: var(--teal); color: var(--bg); font-weight: 600; }
+  .qa-btn:first-child:hover { background: var(--teal2); }
+  .qa-btn:not(:first-child):hover { border-color: var(--teal); color: var(--teal); }
+  .loading { display: inline-block; }
+  .loading::after { content: ''; animation: dots 1.5s infinite; }
+  @keyframes dots { 0%{content:'.'} 33%{content:'..'} 66%{content:'...'} }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="logo-area">
+    <div class="logo-icon">🏥</div>
+    <div class="logo-name">Med<span>Assist</span></div>
+    <div class="logo-sub">CLINICAL AI · V1.0</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">CORE</div>
+    <div class="nav-item active" onclick="showPage('dashboard',this)">
+      <span>📊</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('chat',this)">
+      <span>🧠</span> Clinical Q&A
+      <span class="badge badge-teal">RAG+LLM</span>
+    </div>
+    <div class="nav-item" onclick="showPage('risk',this)">
+      <span>⚠️</span> Risk Scorer
+      <span class="badge badge-blue">ML</span>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">WORKFLOW</div>
+    <div class="nav-item" onclick="showPage('appointments',this)">
+      <span>📅</span> Appointments
+      <span class="badge badge-gold">MCP</span>
+    </div>
+    <div class="nav-item" onclick="showPage('notes',this)">
+      <span>📝</span> Clinical Notes
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div><span class="status-dot"></span><span class="status-text">All AI systems online</span></div>
+    <div style="margin-top:6px;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace">Claude Sonnet · RAG · scikit-learn</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="page-title" id="pageTitle">Clinical <span>Dashboard</span></div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="tag-row" id="pageTags">
+        <span class="tag tag-teal">RAG</span>
+        <span class="tag tag-teal">LLM</span>
+        <span class="tag tag-gold">ML</span>
+        <span class="tag tag-gold">MCP</span>
+      </div>
+      <div class="clinician-badge">⚠️ For qualified clinicians only</div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD PAGE -->
+  <div class="page active" id="page-dashboard">
+    <div class="dash-content">
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-num">4</div><div class="stat-label">AI Modules</div><div class="stat-sub">RAG · LLM · ML · MCP</div></div>
+        <div class="stat-card"><div class="stat-num">15</div><div class="stat-label">Knowledge Chunks</div><div class="stat-sub">Drug DB · Guidelines · Protocols</div></div>
+        <div class="stat-card"><div class="stat-num">2k</div><div class="stat-label">ML Training Samples</div><div class="stat-sub">NEWS2-based risk model</div></div>
+        <div class="stat-card"><div class="stat-num">2</div><div class="stat-label">MCP Integrations</div><div class="stat-sub">Google Calendar · Gmail</div></div>
+      </div>
+      <div class="arch-grid">
+        <div class="arch-card">
+          <h3>🏗 Architecture</h3>
+          <div class="arch-item"><span class="arch-icon">🔍</span><div><div class="arch-title">RAG — Keyword Search</div><div class="arch-desc">Medical knowledge retrieval · Cited answers</div></div></div>
+          <div class="arch-item"><span class="arch-icon">🤖</span><div><div class="arch-title">LLM — Claude Sonnet</div><div class="arch-desc">Clinical Q&A · SOAP notes · Referral letters</div></div></div>
+          <div class="arch-item"><span class="arch-icon">📈</span><div><div class="arch-title">ML — scikit-learn GBM</div><div class="arch-desc">Patient risk scoring · NEWS2-trained classifier</div></div></div>
+          <div class="arch-item"><span class="arch-icon">🔗</span><div><div class="arch-title">MCP — Google Suite</div><div class="arch-desc">Calendar booking · Gmail confirmations</div></div></div>
+        </div>
+        <div class="arch-card">
+          <h3>🚀 Quick Actions</h3>
+          <div class="quick-actions">
+            <button class="qa-btn" onclick="showPage('chat',document.querySelectorAll('.nav-item')[1])">🧠 Ask a Clinical Question</button>
+            <button class="qa-btn" onclick="showPage('risk',document.querySelectorAll('.nav-item')[2])">⚠️ Score Patient Risk</button>
+            <button class="qa-btn" onclick="showPage('appointments',document.querySelectorAll('.nav-item')[3])">📅 Book Appointment</button>
+            <button class="qa-btn" onclick="showPage('notes',document.querySelectorAll('.nav-item')[4])">📝 Generate Clinical Note</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAT PAGE -->
+  <div class="page" id="page-chat">
+    <div class="chat-messages" id="chatMessages">
+      <div class="msg ai">
+        <div class="msg-avatar ai">🏥</div>
+        <div class="msg-bubble">
+          <strong>MedAssist AI</strong> — Clinical Decision Support<br><br>
+          I can help with <strong>drug interactions</strong>, <strong>symptom differentials</strong>, <strong>treatment protocols</strong>, <strong>dosing</strong>, and <strong>clinical guidelines</strong>.<br><br>
+          What clinical question can I help with today?
+        </div>
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <div class="quick-btns">
+        <button class="quick-btn" onclick="sendQuick('What are the Sepsis 6 management steps?')">Sepsis management</button>
+        <button class="quick-btn" onclick="sendQuick('What is the interaction between warfarin and NSAIDs?')">Warfarin + NSAIDs</button>
+        <button class="quick-btn" onclick="sendQuick('What are red flag symptoms for headache?')">Headache red flags</button>
+        <button class="quick-btn" onclick="sendQuick('How do I manage hypertension in a diabetic patient?')">HTN in diabetics</button>
+        <button class="quick-btn" onclick="sendQuick('Explain the Sepsis 6 bundle')">Sepsis 6</button>
+      </div>
+      <div class="input-row">
+        <input class="chat-input" id="chatInput" placeholder="Ask a clinical question..." onkeydown="if(event.key==='Enter')sendChat()"/>
+        <button class="send-btn" onclick="sendChat()">
+          <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RISK PAGE -->
+  <div class="page" id="page-risk">
+    <div class="risk-content">
+      <div class="risk-grid">
+        <div class="risk-card">
+          <h3>Patient Vitals</h3>
+          <div class="form-group"><label class="form-label">Age</label><input class="form-input" id="r_age" type="number" placeholder="65"/></div>
+          <div class="form-group"><label class="form-label">Systolic BP (mmHg)</label><input class="form-input" id="r_sbp" type="number" placeholder="120"/></div>
+          <div class="form-group"><label class="form-label">Diastolic BP (mmHg)</label><input class="form-input" id="r_dbp" type="number" placeholder="80"/></div>
+          <div class="form-group"><label class="form-label">Heart Rate (bpm)</label><input class="form-input" id="r_hr" type="number" placeholder="75"/></div>
+          <div class="form-group"><label class="form-label">SpO2 (%)</label><input class="form-input" id="r_spo2" type="number" placeholder="98"/></div>
+        </div>
+        <div class="risk-card">
+          <h3>Additional Parameters</h3>
+          <div class="form-group"><label class="form-label">Temperature (°C)</label><input class="form-input" id="r_temp" type="number" step="0.1" placeholder="37.0"/></div>
+          <div class="form-group"><label class="form-label">Respiratory Rate (/min)</label><input class="form-input" id="r_rr" type="number" placeholder="16"/></div>
+          <div class="form-group"><label class="form-label">Blood Glucose (mmol/L)</label><input class="form-input" id="r_bg" type="number" step="0.1" placeholder="5.5"/></div>
+          <div class="form-group"><label class="form-label">Consciousness</label>
+            <select class="form-select" id="r_consciousness">
+              <option value="0">Alert (AVPU = A)</option>
+              <option value="1">Altered (AVPU = V/P/U)</option>
+            </select>
+          </div>
+          <button class="btn-primary" onclick="scoreRisk()">⚠️ Calculate Risk Score</button>
+          <button class="btn-secondary" onclick="loadHighRisk()">Load High-Risk Demo</button>
+        </div>
+      </div>
+      <div class="risk-result" id="riskResult"></div>
+    </div>
+  </div>
+
+  <!-- APPOINTMENTS PAGE -->
+  <div class="page" id="page-appointments">
+    <div class="appt-content">
+      <div class="appt-form">
+        <h3 style="font-size:14px;color:var(--muted);margin-bottom:20px;letter-spacing:1px;text-transform:uppercase">Book Appointment</h3>
+        <div class="form-group"><label class="form-label">Patient Name</label><input class="form-input" id="a_patient" placeholder="John Smith"/></div>
+        <div class="form-group"><label class="form-label">Doctor</label><input class="form-input" id="a_doctor" placeholder="Dr. Sarah Johnson"/></div>
+        <div class="form-group"><label class="form-label">Date</label><input class="form-input" id="a_date" type="date"/></div>
+        <div class="form-group"><label class="form-label">Time</label><input class="form-input" id="a_time" type="time"/></div>
+        <div class="form-group"><label class="form-label">Reason</label><input class="form-input" id="a_reason" placeholder="Annual checkup"/></div>
+        <button class="btn-primary" onclick="bookAppt()">📅 Book & Send Confirmation</button>
+        <div class="appt-result" id="apptResult"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTES PAGE -->
+  <div class="page" id="page-notes">
+    <div class="notes-content">
+      <div class="notes-tabs">
+        <button class="notes-tab active" id="tab-soap" onclick="switchTab('soap')">SOAP Note</button>
+        <button class="notes-tab" id="tab-referral" onclick="switchTab('referral')">Referral Letter</button>
+      </div>
+      <div class="notes-form">
+        <div id="soap-form">
+          <div class="form-group"><label class="form-label">Chief Complaint</label><textarea class="notes-textarea" id="n_complaint" placeholder="e.g. chest pain for 2 hours, radiating to left arm..."></textarea></div>
+          <div class="form-group"><label class="form-label">Patient Age & Sex</label><input class="form-input" id="n_age" placeholder="e.g. 58M"/></div>
+          <div class="form-group"><label class="form-label">Vitals (optional)</label><input class="form-input" id="n_vitals" placeholder="e.g. BP 150/90, HR 95, Temp 37.2"/></div>
+          <button class="btn-primary" onclick="generateNote('soap')">📝 Generate SOAP Note</button>
+        </div>
+        <div id="referral-form" style="display:none">
+          <div class="form-group"><label class="form-label">Patient Details</label><input class="form-input" id="r_patient" placeholder="Name, age, sex"/></div>
+          <div class="form-group"><label class="form-label">Referring To</label><input class="form-input" id="r_specialist" placeholder="e.g. Cardiologist"/></div>
+          <div class="form-group"><label class="form-label">Reason for Referral</label><textarea class="notes-textarea" id="r_reason" placeholder="Clinical findings and reason..."></textarea></div>
+          <button class="btn-primary" onclick="generateNote('referral')">📝 Generate Referral Letter</button>
+        </div>
+        <div class="notes-output" id="notesOutput"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API = 'http://127.0.0.1:8000/api';
+
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (el) el.classList.add('active');
+  const titles = { dashboard:'Clinical <span style="color:var(--teal);font-style:italic">Dashboard</span>', chat:'Clinical <span style="color:var(--teal);font-style:italic">Q&A</span>', risk:'Patient <span style="color:var(--teal);font-style:italic">Risk Scorer</span>', appointments:'Book <span style="color:var(--teal);font-style:italic">Appointments</span>', notes:'Clinical <span style="color:var(--teal);font-style:italic">Notes</span>' };
+  document.getElementById('pageTitle').innerHTML = titles[name] || name;
+}
+
+function addMsg(role, html) {
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.innerHTML = `<div class="msg-avatar ${role}">${role==='ai'?'🏥':'👤'}</div><div class="msg-bubble">${html}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'msg ai';
+  div.id = 'typing-indicator';
+  div.innerHTML = `<div class="msg-avatar ai">🏥</div><div class="msg-bubble"><div class="typing"><span></span><span></span><span></span></div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing-indicator');
+  if (t) t.remove();
+}
+
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const q = input.value.trim();
+  if (!q) return;
+  input.value = '';
+  sendQuick(q);
+}
+
+async function sendQuick(query) {
+  addMsg('user', query);
+  showTyping();
+  try {
+    const res = await fetch(`${API}/chat/ask`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, session_id: 'session1', history: [] })
+    });
+    removeTyping();
+    if (!res.ok) throw new Error(`Server error ${res.status}`);
+    const data = await res.json();
+    let html = data.answer || data.response || JSON.stringify(data);
+    html = html.replace(/\n/g, '<br>');
+    if (data.sources && data.sources.length) {
+      html += '<br><br>';
+      data.sources.forEach(s => { html += `<span class="source-chip">📚 ${s}</span>`; });
+    }
+    addMsg('ai', html);
+  } catch(e) {
+    removeTyping();
+    addMsg('ai', `<span style="color:var(--red)">⚠️ Error: ${e.message}</span><br><br>Make sure the backend is running at <code style="color:var(--teal)">http://127.0.0.1:8000</code>`);
+  }
+}
+
+function loadHighRisk() {
+  document.getElementById('r_age').value = 78;
+  document.getElementById('r_sbp').value = 88;
+  document.getElementById('r_dbp').value = 55;
+  document.getElementById('r_hr').value = 118;
+  document.getElementById('r_spo2').value = 91;
+  document.getElementById('r_temp').value = 38.9;
+  document.getElementById('r_rr').value = 26;
+  document.getElementById('r_bg').value = 14.2;
+  document.getElementById('r_consciousness').value = '1';
+}
+
+async function scoreRisk() {
+  const payload = {
+    age: +document.getElementById('r_age').value||65,
+    systolic_bp: +document.getElementById('r_sbp').value||120,
+    diastolic_bp: +document.getElementById('r_dbp').value||80,
+    heart_rate: +document.getElementById('r_hr').value||75,
+    spo2: +document.getElementById('r_spo2').value||98,
+    temperature: +document.getElementById('r_temp').value||37,
+    respiratory_rate: +document.getElementById('r_rr').value||16,
+    blood_glucose: +document.getElementById('r_bg').value||5.5,
+    consciousness: +document.getElementById('r_consciousness').value||0
+  };
+  const result = document.getElementById('riskResult');
+  result.style.display = 'block';
+  result.innerHTML = '<span class="loading">Calculating risk score</span>';
+  try {
+    const res = await fetch(`${API}/risk/score`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error(`Server error ${res.status}`);
+    const data = await res.json();
+    const level = (data.risk_level||'unknown').toLowerCase();
+    const cls = level==='high'?'risk-high':level==='medium'?'risk-medium':'risk-low';
+    const icon = level==='high'?'🔴':level==='medium'?'🟡':'🟢';
+    let html = `<div class="risk-badge ${cls}">${icon} ${(data.risk_level||'').toUpperCase()} RISK</div>`;
+    if (data.probability) html += `<div style="font-size:13px;color:var(--muted);margin-bottom:12px">Probability: <strong style="color:var(--white)">${(data.probability*100).toFixed(1)}%</strong></div>`;
+    if (data.flags && data.flags.length) {
+      html += `<div style="font-size:12px;color:var(--muted);margin-bottom:8px">Clinical Flags:</div>`;
+      data.flags.forEach(f => { html += `<div style="font-size:12px;padding:4px 0;color:var(--text)">• ${f}</div>`; });
+    }
+    if (data.explanation) html += `<div style="margin-top:14px;font-size:13px;line-height:1.65;color:var(--text)">${data.explanation.replace(/\n/g,'<br>')}</div>`;
+    result.innerHTML = html;
+  } catch(e) {
+    result.innerHTML = `<span style="color:var(--red)">Error: ${e.message}</span>`;
+  }
+}
+
+async function bookAppt() {
+  const payload = {
+    patient_name: document.getElementById('a_patient').value||'Patient',
+    doctor_name: document.getElementById('a_doctor').value||'Doctor',
+    date: document.getElementById('a_date').value,
+    time: document.getElementById('a_time').value,
+    reason: document.getElementById('a_reason').value||'Consultation'
+  };
+  const result = document.getElementById('apptResult');
+  result.style.display = 'block';
+  result.innerHTML = '<span class="loading">Booking appointment</span>';
+  try {
+    const res = await fetch(`${API}/appointments/book`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error(`Server error ${res.status}`);
+    const data = await res.json();
+    result.innerHTML = `✅ <strong>Appointment Booked!</strong><br><br>${(data.message||JSON.stringify(data)).replace(/\n/g,'<br>')}`;
+  } catch(e) {
+    result.innerHTML = `<span style="color:var(--red)">Error: ${e.message}</span>`;
+  }
+}
+
+function switchTab(tab) {
+  document.getElementById('soap-form').style.display = tab==='soap'?'block':'none';
+  document.getElementById('referral-form').style.display = tab==='referral'?'block':'none';
+  document.getElementById('tab-soap').classList.toggle('active', tab==='soap');
+  document.getElementById('tab-referral').classList.toggle('active', tab==='referral');
+  document.getElementById('notesOutput').style.display = 'none';
+}
+
+async function generateNote(type) {
+  const output = document.getElementById('notesOutput');
+  output.style.display = 'block';
+  output.textContent = 'Generating note...';
+  try {
+    let payload, endpoint;
+    if (type === 'soap') {
+      payload = { complaint: document.getElementById('n_complaint').value, age_sex: document.getElementById('n_age').value, vitals: document.getElementById('n_vitals').value };
+      endpoint = 'soap';
+    } else {
+      payload = { patient: document.getElementById('r_patient').value, specialist: document.getElementById('r_specialist').value, reason: document.getElementById('r_reason').value };
+      endpoint = 'referral';
+    }
+    const res = await fetch(`${API}/notes/${endpoint}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error(`Server error ${res.status}`);
+    const data = await res.json();
+    output.textContent = data.note || data.content || JSON.stringify(data);
+  } catch(e) {
+    output.textContent = `Error: ${e.message}`;
+  }
+}
+</script>
+</body>
+</html>
