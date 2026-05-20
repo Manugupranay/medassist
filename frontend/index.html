@@ -22,8 +22,6 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; display: flex; height: 100vh; overflow: hidden; }
-
-  /* SIDEBAR */
   .sidebar { width: 240px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 0; flex-shrink: 0; }
   .logo-area { padding: 24px 20px 20px; border-bottom: 1px solid var(--border); }
   .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--teal), #0099cc); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 10px; }
@@ -43,8 +41,6 @@
   .status-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; display: inline-block; margin-right: 6px; animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
   .status-text { font-size: 11px; color: var(--muted); }
-
-  /* MAIN */
   .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
   .topbar { padding: 16px 28px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--surface); }
   .page-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--white); }
@@ -54,12 +50,8 @@
   .tag-teal { border-color: var(--teal); color: var(--teal); }
   .tag-gold { border-color: var(--gold); color: var(--gold); }
   .clinician-badge { font-size: 11px; padding: 5px 12px; background: rgba(240,192,96,0.1); border: 1px solid rgba(240,192,96,0.3); border-radius: 20px; color: var(--gold); }
-
-  /* PAGES */
   .page { display: none; flex: 1; flex-direction: column; overflow: hidden; }
   .page.active { display: flex; }
-
-  /* CHAT PAGE */
   .chat-messages { flex: 1; overflow-y: auto; padding: 24px 28px; display: flex; flex-direction: column; gap: 16px; }
   .chat-messages::-webkit-scrollbar { width: 4px; }
   .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
@@ -78,7 +70,6 @@
   .typing span:nth-child(2) { animation-delay: 0.2s; }
   .typing span:nth-child(3) { animation-delay: 0.4s; }
   @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-8px)} }
-
   .chat-input-area { padding: 16px 28px; border-top: 1px solid var(--border); background: var(--surface); }
   .quick-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
   .quick-btn { font-size: 11.5px; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface2); color: var(--muted); cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
@@ -89,8 +80,6 @@
   .send-btn { width: 44px; height: 44px; background: var(--teal); border: none; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .send-btn:hover { background: var(--teal2); }
   .send-btn svg { width: 18px; height: 18px; fill: var(--bg); }
-
-  /* RISK PAGE */
   .risk-content { flex: 1; overflow-y: auto; padding: 28px; }
   .risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 900px; }
   .risk-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
@@ -109,8 +98,6 @@
   .risk-high { background: rgba(255,85,85,0.15); border: 1px solid rgba(255,85,85,0.4); color: var(--red); }
   .risk-medium { background: rgba(240,192,96,0.15); border: 1px solid rgba(240,192,96,0.4); color: var(--gold); }
   .risk-low { background: rgba(80,250,123,0.15); border: 1px solid rgba(80,250,123,0.4); color: var(--green); }
-
-  /* NOTES PAGE */
   .notes-content { flex: 1; overflow-y: auto; padding: 28px; }
   .notes-tabs { display: flex; gap: 4px; margin-bottom: 20px; }
   .notes-tab { padding: 8px 20px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; transition: all 0.2s; }
@@ -119,13 +106,9 @@
   .notes-textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; color: var(--white); font-size: 13px; font-family: 'DM Sans', sans-serif; outline: none; resize: vertical; min-height: 80px; }
   .notes-textarea:focus { border-color: var(--teal); }
   .notes-output { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-top: 16px; font-size: 13px; line-height: 1.7; white-space: pre-wrap; display: none; color: var(--text); min-height: 100px; }
-
-  /* APPOINTMENTS PAGE */
   .appt-content { flex: 1; overflow-y: auto; padding: 28px; }
   .appt-form { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; max-width: 600px; }
   .appt-result { background: var(--surface2); border: 1px solid rgba(0,212,200,0.3); border-radius: 10px; padding: 16px; margin-top: 16px; display: none; color: var(--text); font-size: 13px; line-height: 1.65; }
-
-  /* DASHBOARD */
   .dash-content { flex: 1; overflow-y: auto; padding: 28px; }
   .stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 28px; }
   .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
@@ -158,7 +141,6 @@
     <div class="logo-name">Med<span>Assist</span></div>
     <div class="logo-sub">CLINICAL AI · V1.0</div>
   </div>
-
   <div class="nav-section">
     <div class="nav-label">CORE</div>
     <div class="nav-item active" onclick="showPage('dashboard',this)">
@@ -173,7 +155,6 @@
       <span class="badge badge-blue">ML</span>
     </div>
   </div>
-
   <div class="nav-section">
     <div class="nav-label">WORKFLOW</div>
     <div class="nav-item" onclick="showPage('appointments',this)">
@@ -183,18 +164,19 @@
     <div class="nav-item" onclick="showPage('notes',this)">
       <span>📝</span> Clinical Notes
     </div>
+    <div class="nav-item" onclick="showPage('triage',this)">
+      <span>🤖</span> Triage Agent
+      <span class="badge badge-gold">LangGraph</span>
+    </div>
   </div>
-
   <div class="sidebar-footer">
     <div><span class="status-dot"></span><span class="status-text">All AI systems online</span></div>
-    <div style="margin-top:6px;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace">Claude Sonnet · RAG · scikit-learn</div>
+    <div style="margin-top:6px;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace">Claude Sonnet · RAG · scikit-learn · LangGraph</div>
   </div>
 </div>
 
 <!-- MAIN -->
 <div class="main">
-
-  <!-- TOPBAR -->
   <div class="topbar">
     <div class="page-title" id="pageTitle">Clinical <span>Dashboard</span></div>
     <div style="display:flex;align-items:center;gap:12px">
@@ -203,6 +185,7 @@
         <span class="tag tag-teal">LLM</span>
         <span class="tag tag-gold">ML</span>
         <span class="tag tag-gold">MCP</span>
+        <span class="tag tag-gold">LangGraph</span>
       </div>
       <div class="clinician-badge">⚠️ For qualified clinicians only</div>
     </div>
@@ -212,8 +195,8 @@
   <div class="page active" id="page-dashboard">
     <div class="dash-content">
       <div class="stat-grid">
-        <div class="stat-card"><div class="stat-num">4</div><div class="stat-label">AI Modules</div><div class="stat-sub">RAG · LLM · ML · MCP</div></div>
-        <div class="stat-card"><div class="stat-num">15</div><div class="stat-label">Knowledge Chunks</div><div class="stat-sub">Drug DB · Guidelines · Protocols</div></div>
+        <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">AI Modules</div><div class="stat-sub">RAG · LLM · ML · MCP · LangGraph</div></div>
+        <div class="stat-card"><div class="stat-num">16</div><div class="stat-label">Knowledge Chunks</div><div class="stat-sub">Drug DB · Guidelines · Protocols</div></div>
         <div class="stat-card"><div class="stat-num">2k</div><div class="stat-label">ML Training Samples</div><div class="stat-sub">NEWS2-based risk model</div></div>
         <div class="stat-card"><div class="stat-num">2</div><div class="stat-label">MCP Integrations</div><div class="stat-sub">Google Calendar · Gmail</div></div>
       </div>
@@ -224,10 +207,12 @@
           <div class="arch-item"><span class="arch-icon">🤖</span><div><div class="arch-title">LLM — Claude Sonnet</div><div class="arch-desc">Clinical Q&A · SOAP notes · Referral letters</div></div></div>
           <div class="arch-item"><span class="arch-icon">📈</span><div><div class="arch-title">ML — scikit-learn GBM</div><div class="arch-desc">Patient risk scoring · NEWS2-trained classifier</div></div></div>
           <div class="arch-item"><span class="arch-icon">🔗</span><div><div class="arch-title">MCP — Google Suite</div><div class="arch-desc">Calendar booking · Gmail confirmations</div></div></div>
+          <div class="arch-item"><span class="arch-icon">🧩</span><div><div class="arch-title">LangGraph — Triage Agent</div><div class="arch-desc">Multi-step orchestration · Plan · Tools · Synthesize</div></div></div>
         </div>
         <div class="arch-card">
           <h3>🚀 Quick Actions</h3>
           <div class="quick-actions">
+            <button class="qa-btn" onclick="showPage('triage',document.querySelectorAll('.nav-item')[5])">🤖 Run Clinical Triage Agent</button>
             <button class="qa-btn" onclick="showPage('chat',document.querySelectorAll('.nav-item')[1])">🧠 Ask a Clinical Question</button>
             <button class="qa-btn" onclick="showPage('risk',document.querySelectorAll('.nav-item')[2])">⚠️ Score Patient Risk</button>
             <button class="qa-btn" onclick="showPage('appointments',document.querySelectorAll('.nav-item')[3])">📅 Book Appointment</button>
@@ -339,17 +324,78 @@
     </div>
   </div>
 
+  <!-- TRIAGE AGENT PAGE -->
+  <div class="page" id="page-triage">
+    <div class="risk-content">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;max-width:900px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div style="width:40px;height:40px;background:linear-gradient(135deg,var(--gold),#e8a020);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px">🤖</div>
+          <div>
+            <div style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--white)">Clinical Triage Agent</div>
+            <div style="font-size:11px;color:var(--muted);letter-spacing:1px">LANGGRAPH · MULTI-STEP REASONING</div>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
+            <span class="tag tag-teal">RAG</span>
+            <span class="tag tag-gold">ML Risk</span>
+            <span class="tag tag-teal">LangGraph</span>
+            <span class="tag" style="border-color:cornflowerblue;color:cornflowerblue">SOAP</span>
+            <span class="tag tag-gold">MCP</span>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.7">
+          Describe a patient in plain language. The LangGraph agent orchestrates <strong style="color:var(--teal)">risk scoring</strong>, <strong style="color:var(--teal)">RAG retrieval</strong>, and <strong style="color:var(--teal)">clinical synthesis</strong> in coordinated steps. For HIGH-risk patients it auto-generates a <strong style="color:var(--gold)">SOAP note</strong> and schedules a <strong style="color:var(--gold)">follow-up via MCP</strong>.
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;max-width:900px">
+        <label class="form-label" style="margin-bottom:10px;display:block">Clinical Description</label>
+        <textarea class="notes-textarea" id="triageInput" style="min-height:100px;margin-bottom:12px" placeholder="e.g. 67-year-old male, BP 90/55, HR 130, confused, temp 39.2°C, fever and weakness for 2 days. What should I do?"></textarea>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+          <button class="quick-btn" onclick="loadTriageDemo('sepsis')">🔴 High Risk — Sepsis</button>
+          <button class="quick-btn" onclick="loadTriageDemo('stable')">🟢 Stable — Hypertension</button>
+          <button class="quick-btn" onclick="loadTriageDemo('chest')">🟡 Chest Pain</button>
+        </div>
+        <button class="btn-primary" style="max-width:300px" onclick="runTriage()">🤖 Run Clinical Triage Agent</button>
+      </div>
+      <div id="triageResult" style="display:none;max-width:900px">
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px">
+          <div style="font-size:12px;color:var(--muted);letter-spacing:1px;margin-bottom:10px">⚡ AGENT EXECUTION TRACE</div>
+          <div id="triageTrace" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text);line-height:1.9"></div>
+        </div>
+        <div id="triageRiskBadge" style="margin-bottom:16px"></div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px">
+          <div style="font-size:12px;color:var(--muted);letter-spacing:1px;margin-bottom:12px">🧠 CLINICAL SYNTHESIS</div>
+          <div id="triageSynthesis" style="font-size:13px;line-height:1.8;color:var(--text);white-space:pre-wrap"></div>
+        </div>
+        <div id="triageSoapSection" style="display:none;background:var(--surface);border:1px solid rgba(0,212,200,0.3);border-radius:12px;padding:20px;margin-bottom:16px">
+          <div style="font-size:12px;color:var(--teal);letter-spacing:1px;margin-bottom:12px">📝 AUTO-GENERATED SOAP NOTE</div>
+          <div id="triageSoap" style="font-size:12.5px;line-height:1.8;color:var(--text);white-space:pre-wrap;font-family:'JetBrains Mono',monospace"></div>
+        </div>
+        <div id="triageApptSection" style="display:none;background:var(--surface2);border:1px solid rgba(240,192,96,0.3);border-radius:12px;padding:16px;margin-bottom:16px">
+          <div style="font-size:12px;color:var(--gold);letter-spacing:1px;margin-bottom:8px">📅 MCP — URGENT FOLLOW-UP SCHEDULED</div>
+          <div id="triageAppt" style="font-size:12.5px;color:var(--text)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
-const API = 'https://medassist-production-54bb.up.railway.app/api';
+const API = 'http://127.0.0.1:8000/api';
 
 function showPage(name, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   if (el) el.classList.add('active');
-  const titles = { dashboard:'Clinical <span style="color:var(--teal);font-style:italic">Dashboard</span>', chat:'Clinical <span style="color:var(--teal);font-style:italic">Q&A</span>', risk:'Patient <span style="color:var(--teal);font-style:italic">Risk Scorer</span>', appointments:'Book <span style="color:var(--teal);font-style:italic">Appointments</span>', notes:'Clinical <span style="color:var(--teal);font-style:italic">Notes</span>' };
+  const titles = {
+    dashboard:'Clinical <span style="color:var(--teal);font-style:italic">Dashboard</span>',
+    chat:'Clinical <span style="color:var(--teal);font-style:italic">Q&A</span>',
+    risk:'Patient <span style="color:var(--teal);font-style:italic">Risk Scorer</span>',
+    appointments:'Book <span style="color:var(--teal);font-style:italic">Appointments</span>',
+    notes:'Clinical <span style="color:var(--teal);font-style:italic">Notes</span>',
+    triage:'Clinical <span style="color:var(--teal);font-style:italic">Triage Agent</span>'
+  };
   document.getElementById('pageTitle').innerHTML = titles[name] || name;
 }
 
@@ -520,9 +566,60 @@ async function generateNote(type) {
     output.textContent = `Error: ${e.message}`;
   }
 }
+
+const TRIAGE_DEMOS = {
+  sepsis: "67-year-old male, BP 90/55, HR 130, confused, temp 39.2°C, respiratory rate 26, SpO2 91%. Presenting with fever and weakness for 2 days. Partner says he has been getting worse. What should I do?",
+  stable: "58-year-old female, BP 158/94, HR 78, alert and oriented, temp 36.8°C, respiratory rate 15, SpO2 97%. Presenting for routine hypertension review. Taking amlodipine 5mg. No chest pain or shortness of breath.",
+  chest: "52-year-old male, BP 145/90, HR 105, diaphoretic, temp 37.1°C, respiratory rate 20, SpO2 95%. Sudden onset crushing chest pain radiating to left arm, started 45 minutes ago. History of smoking."
+};
+
+function loadTriageDemo(type) {
+  document.getElementById('triageInput').value = TRIAGE_DEMOS[type];
+}
+
+async function runTriage() {
+  const input = document.getElementById('triageInput').value.trim();
+  if (!input) return;
+  const resultDiv = document.getElementById('triageResult');
+  resultDiv.style.display = 'block';
+  document.getElementById('triageTrace').innerHTML = '<span style="color:var(--teal)">⟳ Agent running...</span>';
+  document.getElementById('triageRiskBadge').innerHTML = '';
+  document.getElementById('triageSynthesis').textContent = '';
+  document.getElementById('triageSoapSection').style.display = 'none';
+  document.getElementById('triageApptSection').style.display = 'none';
+  try {
+    const res = await fetch(`${API}/triage/analyze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ patient_input: input, session_id: 'triage1' })
+    });
+    if (!res.ok) throw new Error(`Server error ${res.status}`);
+    const data = await res.json();
+    document.getElementById('triageTrace').innerHTML = (data.trace || []).map(t => `<div>${t}</div>`).join('');
+    const level = (data.risk_level || 'UNKNOWN').toUpperCase();
+    const cls = level === 'HIGH' ? 'risk-high' : level === 'MEDIUM' ? 'risk-medium' : 'risk-low';
+    const icon = level === 'HIGH' ? '🔴' : level === 'MEDIUM' ? '🟡' : '🟢';
+    let badgeHtml = `<div class="risk-badge ${cls}">${icon} ${level} RISK — ${(data.risk_probability*100).toFixed(1)}% probability</div>`;
+    if (data.risk_flags && data.risk_flags.length) {
+      badgeHtml += `<div style="font-size:12px;color:var(--muted);margin-bottom:4px">Clinical flags:</div>`;
+      data.risk_flags.forEach(f => { badgeHtml += `<div style="font-size:12px;padding:3px 0;color:var(--text)">• ${f}</div>`; });
+    }
+    document.getElementById('triageRiskBadge').innerHTML = badgeHtml;
+    document.getElementById('triageSynthesis').textContent = data.synthesis || '';
+    if (data.soap_note) {
+      document.getElementById('triageSoapSection').style.display = 'block';
+      document.getElementById('triageSoap').textContent = data.soap_note;
+    }
+    if (data.appointment_booked) {
+      document.getElementById('triageApptSection').style.display = 'block';
+      document.getElementById('triageAppt').textContent = data.high_risk_actions_taken
+        ? '✅ Urgent follow-up appointment scheduled via Google Calendar. Confirmation sent via Gmail.'
+        : 'Appointment booking attempted.';
+    }
+  } catch(e) {
+    document.getElementById('triageTrace').innerHTML = `<span style="color:var(--red)">⚠️ Error: ${e.message}</span>`;
+  }
+}
 </script>
 </body>
 </html>
-
-
-
