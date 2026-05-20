@@ -141,10 +141,11 @@
     <div class="nav-item" onclick="showPage('appointments',this)"><span>📅</span> Appointments <span class="badge badge-gold">MCP</span></div>
     <div class="nav-item" onclick="showPage('notes',this)"><span>📝</span> Clinical Notes</div>
     <div class="nav-item" onclick="showPage('triage',this)"><span>🤖</span> Triage Agent <span class="badge badge-gold">LangGraph</span></div>
+    <div class="nav-item" onclick="showPage('multiagent',this)"><span>👥</span> Multi-Agent <span class="badge badge-teal">NEW</span></div>
   </div>
   <div class="sidebar-footer">
     <div><span class="status-dot"></span><span class="status-text">All AI systems online</span></div>
-    <div style="margin-top:6px;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace">Claude · RAG · GBM · MCP · LangGraph</div>
+    <div style="margin-top:6px;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace">Claude · RAG · GBM · MCP · LangGraph · Multi-Agent</div>
   </div>
 </div>
 
@@ -353,6 +354,80 @@
     </div>
   </div>
 
+
+  <!-- MULTI-AGENT SYSTEM -->
+  <div class="page" id="page-multiagent">
+    <div class="risk-content">
+      <!-- Header -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;max-width:960px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div style="width:40px;height:40px;background:linear-gradient(135deg,#1B4F8C,#0099cc);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px">👥</div>
+          <div>
+            <div style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--white)">Multi-Agent Clinical System</div>
+            <div style="font-size:11px;color:var(--muted);letter-spacing:1px">3 PARALLEL SPECIALISTS · CONSENSUS GENERATOR · CLAUDE SONNET</div>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
+            <span class="tag" style="border-color:#E74C3C;color:#E74C3C">🩺 Diagnosis</span>
+            <span class="tag" style="border-color:#9B59B6;color:#9B59B6">💊 Pharmacy</span>
+            <span class="tag" style="border-color:#27AE60;color:#27AE60">📋 Care Plan</span>
+            <span class="tag tag-teal">🤝 Consensus</span>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.7">
+          Three specialist AI agents run <strong style="color:var(--teal)">in parallel</strong> — Diagnosis, Pharmacy, and Care Plan — each providing independent expert assessment. A fourth <strong style="color:var(--gold)">Consensus Generator</strong> synthesizes all three outputs, resolves conflicts, and produces a unified clinical recommendation.
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;max-width:960px">
+        <label class="form-label" style="margin-bottom:10px;display:block">Patient Description</label>
+        <textarea class="notes-textarea" id="maInput" style="min-height:90px;margin-bottom:12px" placeholder="e.g. 67-year-old male, BP 90/55, HR 130, confused, temp 39.2°C, SpO2 91%, fever for 2 days..."></textarea>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+          <button class="quick-btn" onclick="loadMADemo('sepsis')">🔴 Sepsis — Multi-Agent</button>
+          <button class="quick-btn" onclick="loadMADemo('chest')">🟡 Chest Pain — Multi-Agent</button>
+          <button class="quick-btn" onclick="loadMADemo('stable')">🟢 Stable Hypertension</button>
+        </div>
+        <button class="btn-primary" style="max-width:360px" onclick="runMultiAgent()">👥 Run Multi-Agent System</button>
+      </div>
+
+      <!-- Results -->
+      <div id="maResult" style="display:none;max-width:960px">
+
+        <!-- Trace -->
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px">
+          <div style="font-size:12px;color:var(--muted);letter-spacing:1px;margin-bottom:10px">⚡ AGENT EXECUTION TRACE</div>
+          <div id="maTrace" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text);line-height:2"></div>
+        </div>
+
+        <!-- 3 specialist outputs side by side -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+          <div style="background:var(--surface);border:1px solid rgba(231,76,60,0.3);border-radius:12px;padding:16px">
+            <div style="font-size:11px;color:#E74C3C;letter-spacing:1px;margin-bottom:10px">🩺 DIAGNOSIS SPECIALIST</div>
+            <div id="maDiagnosis" style="font-size:12px;line-height:1.7;color:var(--text);white-space:pre-wrap;max-height:320px;overflow-y:auto"></div>
+          </div>
+          <div style="background:var(--surface);border:1px solid rgba(155,89,182,0.3);border-radius:12px;padding:16px">
+            <div style="font-size:11px;color:#9B59B6;letter-spacing:1px;margin-bottom:10px">💊 PHARMACY SPECIALIST</div>
+            <div id="maPharmacy" style="font-size:12px;line-height:1.7;color:var(--text);white-space:pre-wrap;max-height:320px;overflow-y:auto"></div>
+          </div>
+          <div style="background:var(--surface);border:1px solid rgba(39,174,96,0.3);border-radius:12px;padding:16px">
+            <div style="font-size:11px;color:#27AE60;letter-spacing:1px;margin-bottom:10px">📋 CARE PLAN SPECIALIST</div>
+            <div id="maCarePlan" style="font-size:12px;line-height:1.7;color:var(--text);white-space:pre-wrap;max-height:320px;overflow-y:auto"></div>
+          </div>
+        </div>
+
+        <!-- Consensus output -->
+        <div style="background:var(--surface);border:1px solid rgba(0,212,200,0.4);border-radius:12px;padding:20px;margin-bottom:16px">
+          <div style="font-size:12px;color:var(--teal);letter-spacing:1px;margin-bottom:12px">🤝 CONSENSUS GENERATOR — Unified Clinical Recommendation</div>
+          <div id="maConsensus" style="font-size:13px;line-height:1.8;color:var(--text);white-space:pre-wrap"></div>
+        </div>
+
+        <!-- Cost table -->
+        <div id="maAuditTable" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px"></div>
+
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -369,7 +444,8 @@ function showPage(name, el) {
     risk:'Patient <span style="color:var(--teal);font-style:italic">Risk Scorer</span>',
     appointments:'Book <span style="color:var(--teal);font-style:italic">Appointments</span>',
     notes:'Clinical <span style="color:var(--teal);font-style:italic">Notes</span>',
-    triage:'Clinical <span style="color:var(--teal);font-style:italic">Triage Agent v2</span>'
+    triage:'Clinical <span style="color:var(--teal);font-style:italic">Triage Agent v2</span>',
+    multiagent:'Multi-Agent <span style="color:var(--teal);font-style:italic">Clinical System</span>'
   };
   document.getElementById('pageTitle').innerHTML = titles[name] || name;
 }
@@ -569,6 +645,91 @@ async function runTriage() {
 
   } catch(e) {
     document.getElementById('triageTrace').innerHTML = `<span style="color:var(--red)">⚠️ Error: ${e.message}</span>`;
+  }
+}
+
+const MA_DEMOS = {
+  sepsis: "67-year-old male, BP 90/55, HR 130, confused, temp 39.2°C, respiratory rate 26, SpO2 91%. Presenting with fever and weakness for 2 days. What should I do?",
+  chest: "52-year-old male, BP 145/90, HR 105, diaphoretic, temp 37.1°C, RR 20, SpO2 95%. Sudden onset crushing chest pain radiating to left arm, 45 minutes ago. History of smoking.",
+  stable: "58-year-old female, BP 158/94, HR 78, alert, temp 36.8°C, RR 15, SpO2 97%. Routine hypertension review. On amlodipine 5mg. No chest pain."
+};
+
+function loadMADemo(type) { document.getElementById('maInput').value = MA_DEMOS[type]; }
+
+async function runMultiAgent() {
+  const input = document.getElementById('maInput').value.trim();
+  if (!input) return;
+
+  const resultDiv = document.getElementById('maResult');
+  resultDiv.style.display = 'block';
+  document.getElementById('maTrace').innerHTML = '<span style="color:var(--teal)">⟳ Dispatching 3 agents in parallel...</span>';
+  document.getElementById('maDiagnosis').textContent = 'Running...';
+  document.getElementById('maPharmacy').textContent = 'Running...';
+  document.getElementById('maCarePlan').textContent = 'Running...';
+  document.getElementById('maConsensus').textContent = '';
+  document.getElementById('maAuditTable').style.display = 'none';
+
+  try {
+    const res = await fetch(`${API}/multiagent/analyze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ patient_input: input })
+    });
+    if (!res.ok) throw new Error(`Server error ${res.status}`);
+    const data = await res.json();
+
+    // Trace
+    document.getElementById('maTrace').innerHTML = (data.trace || []).map(t => {
+      if (t.includes('──')) return `<div style="color:var(--border);border-top:1px solid var(--border);margin:4px 0"></div>`;
+      if (t.includes('TOTAL COST') || t.includes('TOTAL TIME') || t.includes('AGENTS RUN') || t.includes('TOTAL TOKENS')) return `<div style="color:var(--gold);font-weight:600">${t}</div>`;
+      if (t.includes('consensus complete')) return `<div style="color:var(--green);font-weight:600">${t}</div>`;
+      if (t.startsWith('   └─')) return `<div style="color:var(--muted);padding-left:16px">${t}</div>`;
+      return `<div>${t}</div>`;
+    }).join('');
+
+    // Specialist outputs
+    document.getElementById('maDiagnosis').textContent = data.diagnosis?.output || 'No output';
+    document.getElementById('maPharmacy').textContent = data.pharmacy?.output || 'No output';
+    document.getElementById('maCarePlan').textContent = data.care_plan?.output || 'No output';
+
+    // Consensus
+    document.getElementById('maConsensus').textContent = data.consensus?.output || 'No consensus generated';
+
+    // Audit table
+    const auditDiv = document.getElementById('maAuditTable');
+    auditDiv.style.display = 'block';
+    const agents = [data.diagnosis, data.pharmacy, data.care_plan, data.consensus];
+    const agentColors = ['#E74C3C', '#9B59B6', '#27AE60', 'var(--teal)'];
+    let rows = agents.map((a, i) => `
+      <tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:9px 12px;color:${agentColors[i]};font-weight:600">${a?.icon||''} ${a?.agent||''}</td>
+        <td style="padding:9px 12px;color:var(--teal);font-family:'JetBrains Mono',monospace">${a?.time_s||0}s</td>
+        <td style="padding:9px 12px;color:var(--muted);font-size:11px">${a?.model||''}</td>
+        <td style="padding:9px 12px;color:var(--gold);font-family:'JetBrains Mono',monospace">$${(a?.cost_usd||0).toFixed(5)}</td>
+        <td style="padding:9px 12px;color:var(--muted);font-size:11px">${i < 3 ? 'Parallel' : 'Sequential'}</td>
+      </tr>`).join('');
+    rows += `<tr style="border-top:2px solid var(--teal)">
+      <td style="padding:9px 12px;color:var(--gold);font-weight:700">TOTAL</td>
+      <td style="padding:9px 12px;color:var(--gold);font-family:'JetBrains Mono',monospace;font-weight:700">${data.total_time}s</td>
+      <td style="padding:9px 12px;color:var(--muted);font-size:11px">${data.total_tokens} tokens</td>
+      <td style="padding:9px 12px;color:var(--gold);font-family:'JetBrains Mono',monospace;font-weight:700">$${(data.total_cost||0).toFixed(5)}</td>
+      <td style="padding:9px 12px;color:var(--muted);font-size:11px">${data.agents_run} agents (${data.parallel_agents} parallel)</td>
+    </tr>`;
+    auditDiv.innerHTML = `
+      <div style="font-size:12px;color:var(--muted);letter-spacing:1px;margin-bottom:14px">🔍 MULTI-AGENT AUDIT — Cost and timing per agent</div>
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr style="border-bottom:1px solid var(--border)">
+          <th style="padding:7px 12px;color:var(--muted);text-align:left;font-weight:500">Agent</th>
+          <th style="padding:7px 12px;color:var(--muted);text-align:left;font-weight:500">Time</th>
+          <th style="padding:7px 12px;color:var(--muted);text-align:left;font-weight:500">Model</th>
+          <th style="padding:7px 12px;color:var(--muted);text-align:left;font-weight:500">Cost</th>
+          <th style="padding:7px 12px;color:var(--muted);text-align:left;font-weight:500">Mode</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+
+  } catch(e) {
+    document.getElementById('maTrace').innerHTML = `<span style="color:var(--red)">⚠️ Error: ${e.message}</span>`;
   }
 }
 </script>
