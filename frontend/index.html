@@ -7,18 +7,9 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
   :root {
-    --bg: #040d18;
-    --surface: #071628;
-    --surface2: #0a1f35;
-    --border: #112240;
-    --teal: #00d4c8;
-    --teal2: #00a89e;
-    --gold: #f0c060;
-    --red: #ff5555;
-    --green: #50fa7b;
-    --text: #ccd6f6;
-    --muted: #8892b0;
-    --white: #e6f1ff;
+    --bg: #040d18; --surface: #071628; --surface2: #0a1f35; --border: #112240;
+    --teal: #00d4c8; --teal2: #00a89e; --gold: #f0c060; --red: #ff5555;
+    --green: #50fa7b; --text: #ccd6f6; --muted: #8892b0; --white: #e6f1ff;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; display: flex; height: 100vh; overflow: hidden; }
@@ -133,54 +124,35 @@
 </style>
 </head>
 <body>
-
-<!-- SIDEBAR -->
 <div class="sidebar">
   <div class="logo-area">
     <div class="logo-icon">🏥</div>
     <div class="logo-name">Med<span>Assist</span></div>
-    <div class="logo-sub">CLINICAL AI · V1.0</div>
+    <div class="logo-sub">CLINICAL AI · V2.0</div>
   </div>
   <div class="nav-section">
     <div class="nav-label">CORE</div>
-    <div class="nav-item active" onclick="showPage('dashboard',this)">
-      <span>📊</span> Dashboard
-    </div>
-    <div class="nav-item" onclick="showPage('chat',this)">
-      <span>🧠</span> Clinical Q&A
-      <span class="badge badge-teal">RAG+LLM</span>
-    </div>
-    <div class="nav-item" onclick="showPage('risk',this)">
-      <span>⚠️</span> Risk Scorer
-      <span class="badge badge-blue">ML</span>
-    </div>
+    <div class="nav-item active" onclick="showPage('dashboard',this)"><span>📊</span> Dashboard</div>
+    <div class="nav-item" onclick="showPage('chat',this)"><span>🧠</span> Clinical Q&A <span class="badge badge-teal">RAG+LLM</span></div>
+    <div class="nav-item" onclick="showPage('risk',this)"><span>⚠️</span> Risk Scorer <span class="badge badge-blue">ML</span></div>
   </div>
   <div class="nav-section">
     <div class="nav-label">WORKFLOW</div>
-    <div class="nav-item" onclick="showPage('appointments',this)">
-      <span>📅</span> Appointments
-      <span class="badge badge-gold">MCP</span>
-    </div>
-    <div class="nav-item" onclick="showPage('notes',this)">
-      <span>📝</span> Clinical Notes
-    </div>
-    <div class="nav-item" onclick="showPage('triage',this)">
-      <span>🤖</span> Triage Agent
-      <span class="badge badge-gold">LangGraph</span>
-    </div>
+    <div class="nav-item" onclick="showPage('appointments',this)"><span>📅</span> Appointments <span class="badge badge-gold">MCP</span></div>
+    <div class="nav-item" onclick="showPage('notes',this)"><span>📝</span> Clinical Notes</div>
+    <div class="nav-item" onclick="showPage('triage',this)"><span>🤖</span> Triage Agent <span class="badge badge-gold">LangGraph</span></div>
   </div>
   <div class="sidebar-footer">
     <div><span class="status-dot"></span><span class="status-text">All AI systems online</span></div>
-    <div style="margin-top:6px;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace">Claude Sonnet · RAG · scikit-learn · LangGraph</div>
+    <div style="margin-top:6px;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace">Claude · RAG · GBM · MCP · LangGraph</div>
   </div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
   <div class="topbar">
     <div class="page-title" id="pageTitle">Clinical <span>Dashboard</span></div>
     <div style="display:flex;align-items:center;gap:12px">
-      <div class="tag-row" id="pageTags">
+      <div class="tag-row">
         <span class="tag tag-teal">RAG</span>
         <span class="tag tag-teal">LLM</span>
         <span class="tag tag-gold">ML</span>
@@ -191,7 +163,7 @@
     </div>
   </div>
 
-  <!-- DASHBOARD PAGE -->
+  <!-- DASHBOARD -->
   <div class="page active" id="page-dashboard">
     <div class="dash-content">
       <div class="stat-grid">
@@ -205,9 +177,9 @@
           <h3>🏗 Architecture</h3>
           <div class="arch-item"><span class="arch-icon">🔍</span><div><div class="arch-title">RAG — Keyword Search</div><div class="arch-desc">Medical knowledge retrieval · Cited answers</div></div></div>
           <div class="arch-item"><span class="arch-icon">🤖</span><div><div class="arch-title">LLM — Claude Sonnet</div><div class="arch-desc">Clinical Q&A · SOAP notes · Referral letters</div></div></div>
-          <div class="arch-item"><span class="arch-icon">📈</span><div><div class="arch-title">ML — scikit-learn GBM</div><div class="arch-desc">Patient risk scoring · NEWS2-trained classifier</div></div></div>
+          <div class="arch-item"><span class="arch-icon">📈</span><div><div class="arch-title">ML — scikit-learn GBM</div><div class="arch-desc">Patient risk scoring · NEWS2 protocol</div></div></div>
           <div class="arch-item"><span class="arch-icon">🔗</span><div><div class="arch-title">MCP — Google Suite</div><div class="arch-desc">Calendar booking · Gmail confirmations</div></div></div>
-          <div class="arch-item"><span class="arch-icon">🧩</span><div><div class="arch-title">LangGraph — Triage Agent</div><div class="arch-desc">Multi-step orchestration · Plan · Tools · Synthesize</div></div></div>
+          <div class="arch-item"><span class="arch-icon">🧩</span><div><div class="arch-title">LangGraph — Triage Agent</div><div class="arch-desc">Multi-step orchestration · Audit trail · Cost tracking</div></div></div>
         </div>
         <div class="arch-card">
           <h3>🚀 Quick Actions</h3>
@@ -223,16 +195,12 @@
     </div>
   </div>
 
-  <!-- CHAT PAGE -->
+  <!-- CHAT -->
   <div class="page" id="page-chat">
     <div class="chat-messages" id="chatMessages">
       <div class="msg ai">
         <div class="msg-avatar ai">🏥</div>
-        <div class="msg-bubble">
-          <strong>MedAssist AI</strong> — Clinical Decision Support<br><br>
-          I can help with <strong>drug interactions</strong>, <strong>symptom differentials</strong>, <strong>treatment protocols</strong>, <strong>dosing</strong>, and <strong>clinical guidelines</strong>.<br><br>
-          What clinical question can I help with today?
-        </div>
+        <div class="msg-bubble"><strong>MedAssist AI</strong> — Clinical Decision Support<br><br>I can help with <strong>drug interactions</strong>, <strong>symptom differentials</strong>, <strong>treatment protocols</strong>, <strong>dosing</strong>, and <strong>clinical guidelines</strong>.<br><br>What clinical question can I help with today?</div>
       </div>
     </div>
     <div class="chat-input-area">
@@ -241,18 +209,15 @@
         <button class="quick-btn" onclick="sendQuick('What is the interaction between warfarin and NSAIDs?')">Warfarin + NSAIDs</button>
         <button class="quick-btn" onclick="sendQuick('What are red flag symptoms for headache?')">Headache red flags</button>
         <button class="quick-btn" onclick="sendQuick('How do I manage hypertension in a diabetic patient?')">HTN in diabetics</button>
-        <button class="quick-btn" onclick="sendQuick('Explain the Sepsis 6 bundle')">Sepsis 6</button>
       </div>
       <div class="input-row">
         <input class="chat-input" id="chatInput" placeholder="Ask a clinical question..." onkeydown="if(event.key==='Enter')sendChat()"/>
-        <button class="send-btn" onclick="sendChat()">
-          <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
-        </button>
+        <button class="send-btn" onclick="sendChat()"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg></button>
       </div>
     </div>
   </div>
 
-  <!-- RISK PAGE -->
+  <!-- RISK -->
   <div class="page" id="page-risk">
     <div class="risk-content">
       <div class="risk-grid">
@@ -283,7 +248,7 @@
     </div>
   </div>
 
-  <!-- APPOINTMENTS PAGE -->
+  <!-- APPOINTMENTS -->
   <div class="page" id="page-appointments">
     <div class="appt-content">
       <div class="appt-form">
@@ -299,7 +264,7 @@
     </div>
   </div>
 
-  <!-- NOTES PAGE -->
+  <!-- NOTES -->
   <div class="page" id="page-notes">
     <div class="notes-content">
       <div class="notes-tabs">
@@ -308,15 +273,15 @@
       </div>
       <div class="notes-form">
         <div id="soap-form">
-          <div class="form-group"><label class="form-label">Chief Complaint</label><textarea class="notes-textarea" id="n_complaint" placeholder="e.g. chest pain for 2 hours, radiating to left arm..."></textarea></div>
+          <div class="form-group"><label class="form-label">Chief Complaint</label><textarea class="notes-textarea" id="n_complaint" placeholder="e.g. chest pain for 2 hours..."></textarea></div>
           <div class="form-group"><label class="form-label">Patient Age & Sex</label><input class="form-input" id="n_age" placeholder="e.g. 58M"/></div>
-          <div class="form-group"><label class="form-label">Vitals (optional)</label><input class="form-input" id="n_vitals" placeholder="e.g. BP 150/90, HR 95, Temp 37.2"/></div>
+          <div class="form-group"><label class="form-label">Vitals (optional)</label><input class="form-input" id="n_vitals" placeholder="e.g. BP 150/90, HR 95"/></div>
           <button class="btn-primary" onclick="generateNote('soap')">📝 Generate SOAP Note</button>
         </div>
         <div id="referral-form" style="display:none">
           <div class="form-group"><label class="form-label">Patient Details</label><input class="form-input" id="r_patient" placeholder="Name, age, sex"/></div>
           <div class="form-group"><label class="form-label">Referring To</label><input class="form-input" id="r_specialist" placeholder="e.g. Cardiologist"/></div>
-          <div class="form-group"><label class="form-label">Reason for Referral</label><textarea class="notes-textarea" id="r_reason" placeholder="Clinical findings and reason..."></textarea></div>
+          <div class="form-group"><label class="form-label">Reason for Referral</label><textarea class="notes-textarea" id="r_reason" placeholder="Clinical findings..."></textarea></div>
           <button class="btn-primary" onclick="generateNote('referral')">📝 Generate Referral Letter</button>
         </div>
         <div class="notes-output" id="notesOutput"></div>
@@ -324,15 +289,15 @@
     </div>
   </div>
 
-  <!-- TRIAGE AGENT PAGE -->
+  <!-- TRIAGE AGENT v2 with AUDIT TRAIL -->
   <div class="page" id="page-triage">
     <div class="risk-content">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;max-width:900px">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;max-width:960px">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
           <div style="width:40px;height:40px;background:linear-gradient(135deg,var(--gold),#e8a020);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px">🤖</div>
           <div>
-            <div style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--white)">Clinical Triage Agent</div>
-            <div style="font-size:11px;color:var(--muted);letter-spacing:1px">LANGGRAPH · MULTI-STEP REASONING</div>
+            <div style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--white)">Clinical Triage Agent v2</div>
+            <div style="font-size:11px;color:var(--muted);letter-spacing:1px">LANGGRAPH · MULTI-STEP · FULL AUDIT TRAIL</div>
           </div>
           <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
             <span class="tag tag-teal">RAG</span>
@@ -340,40 +305,50 @@
             <span class="tag tag-teal">LangGraph</span>
             <span class="tag" style="border-color:cornflowerblue;color:cornflowerblue">SOAP</span>
             <span class="tag tag-gold">MCP</span>
+            <span class="tag" style="border-color:var(--green);color:var(--green)">Audit Trail</span>
           </div>
         </div>
         <div style="font-size:12px;color:var(--muted);line-height:1.7">
-          Describe a patient in plain language. The LangGraph agent orchestrates <strong style="color:var(--teal)">risk scoring</strong>, <strong style="color:var(--teal)">RAG retrieval</strong>, and <strong style="color:var(--teal)">clinical synthesis</strong> in coordinated steps. For HIGH-risk patients it auto-generates a <strong style="color:var(--gold)">SOAP note</strong> and schedules a <strong style="color:var(--gold)">follow-up via MCP</strong>.
+          Describe a patient in plain language. The LangGraph agent orchestrates all modules with full cost and timing transparency. Every step is auditable. For HIGH-risk patients it auto-generates a SOAP note and schedules follow-up via MCP.
         </div>
       </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;max-width:900px">
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;max-width:960px">
         <label class="form-label" style="margin-bottom:10px;display:block">Clinical Description</label>
-        <textarea class="notes-textarea" id="triageInput" style="min-height:100px;margin-bottom:12px" placeholder="e.g. 67-year-old male, BP 90/55, HR 130, confused, temp 39.2°C, fever and weakness for 2 days. What should I do?"></textarea>
+        <textarea class="notes-textarea" id="triageInput" style="min-height:90px;margin-bottom:12px" placeholder="e.g. 67-year-old male, BP 90/55, HR 130, confused, temp 39.2°C, fever and weakness for 2 days. What should I do?"></textarea>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
           <button class="quick-btn" onclick="loadTriageDemo('sepsis')">🔴 High Risk — Sepsis</button>
           <button class="quick-btn" onclick="loadTriageDemo('stable')">🟢 Stable — Hypertension</button>
           <button class="quick-btn" onclick="loadTriageDemo('chest')">🟡 Chest Pain</button>
         </div>
-        <button class="btn-primary" style="max-width:300px" onclick="runTriage()">🤖 Run Clinical Triage Agent</button>
+        <button class="btn-primary" style="max-width:320px" onclick="runTriage()">🤖 Run Clinical Triage Agent</button>
       </div>
-      <div id="triageResult" style="display:none;max-width:900px">
+
+      <div id="triageResult" style="display:none;max-width:960px">
+        <!-- Execution trace -->
         <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px">
           <div style="font-size:12px;color:var(--muted);letter-spacing:1px;margin-bottom:10px">⚡ AGENT EXECUTION TRACE</div>
-          <div id="triageTrace" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text);line-height:1.9"></div>
+          <div id="triageTrace" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text);line-height:2"></div>
         </div>
+        <!-- Risk badge -->
         <div id="triageRiskBadge" style="margin-bottom:16px"></div>
+        <!-- Synthesis -->
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px">
           <div style="font-size:12px;color:var(--muted);letter-spacing:1px;margin-bottom:12px">🧠 CLINICAL SYNTHESIS</div>
           <div id="triageSynthesis" style="font-size:13px;line-height:1.8;color:var(--text);white-space:pre-wrap"></div>
         </div>
+        <!-- SOAP note -->
         <div id="triageSoapSection" style="display:none;background:var(--surface);border:1px solid rgba(0,212,200,0.3);border-radius:12px;padding:20px;margin-bottom:16px">
           <div style="font-size:12px;color:var(--teal);letter-spacing:1px;margin-bottom:12px">📝 AUTO-GENERATED SOAP NOTE</div>
           <div id="triageSoap" style="font-size:12.5px;line-height:1.8;color:var(--text);white-space:pre-wrap;font-family:'JetBrains Mono',monospace"></div>
         </div>
+        <!-- Appointment -->
         <div id="triageApptSection" style="display:none;background:var(--surface2);border:1px solid rgba(240,192,96,0.3);border-radius:12px;padding:16px;margin-bottom:16px">
           <div style="font-size:12px;color:var(--gold);letter-spacing:1px;margin-bottom:8px">📅 MCP — URGENT FOLLOW-UP SCHEDULED</div>
           <div id="triageAppt" style="font-size:12.5px;color:var(--text)"></div>
         </div>
+        <!-- Audit table -->
+        <div id="triageAuditTable" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px"></div>
       </div>
     </div>
   </div>
@@ -394,7 +369,7 @@ function showPage(name, el) {
     risk:'Patient <span style="color:var(--teal);font-style:italic">Risk Scorer</span>',
     appointments:'Book <span style="color:var(--teal);font-style:italic">Appointments</span>',
     notes:'Clinical <span style="color:var(--teal);font-style:italic">Notes</span>',
-    triage:'Clinical <span style="color:var(--teal);font-style:italic">Triage Agent</span>'
+    triage:'Clinical <span style="color:var(--teal);font-style:italic">Triage Agent v2</span>'
   };
   document.getElementById('pageTitle').innerHTML = titles[name] || name;
 }
@@ -406,176 +381,98 @@ function addMsg(role, html) {
   div.innerHTML = `<div class="msg-avatar ${role}">${role==='ai'?'🏥':'👤'}</div><div class="msg-bubble">${html}</div>`;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
-  return div;
 }
 
 function showTyping() {
   const msgs = document.getElementById('chatMessages');
   const div = document.createElement('div');
-  div.className = 'msg ai';
-  div.id = 'typing-indicator';
+  div.className = 'msg ai'; div.id = 'typing-indicator';
   div.innerHTML = `<div class="msg-avatar ai">🏥</div><div class="msg-bubble"><div class="typing"><span></span><span></span><span></span></div></div>`;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
 }
-
-function removeTyping() {
-  const t = document.getElementById('typing-indicator');
-  if (t) t.remove();
-}
+function removeTyping() { const t = document.getElementById('typing-indicator'); if(t) t.remove(); }
 
 async function sendChat() {
   const input = document.getElementById('chatInput');
-  const q = input.value.trim();
-  if (!q) return;
-  input.value = '';
-  sendQuick(q);
+  const q = input.value.trim(); if (!q) return; input.value = ''; sendQuick(q);
 }
 
 async function sendQuick(query) {
-  addMsg('user', query);
-  showTyping();
+  addMsg('user', query); showTyping();
   try {
-    const res = await fetch(`${API}/chat/ask`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query, session_id: 'session1', history: [] })
-    });
+    const res = await fetch(`${API}/chat/ask`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({query, session_id:'session1', history:[]}) });
     removeTyping();
     if (!res.ok) throw new Error(`Server error ${res.status}`);
     const data = await res.json();
     let html = data.answer || data.response || JSON.stringify(data);
-    html = html.replace(/\n/g, '<br>');
-    if (data.sources && data.sources.length) {
-      html += '<br><br>';
-      data.sources.forEach(s => { html += `<span class="source-chip">📚 ${s}</span>`; });
-    }
+    html = html.replace(/\n/g,'<br>');
+    if (data.sources && data.sources.length) { html += '<br><br>'; data.sources.forEach(s => { html += `<span class="source-chip">📚 ${s}</span>`; }); }
     addMsg('ai', html);
-  } catch(e) {
-    removeTyping();
-    addMsg('ai', `<span style="color:var(--red)">⚠️ Error: ${e.message}</span><br><br>Make sure the backend is running at <code style="color:var(--teal)">http://127.0.0.1:8000</code>`);
-  }
+  } catch(e) { removeTyping(); addMsg('ai', `<span style="color:var(--red)">⚠️ Error: ${e.message}</span>`); }
 }
 
 function loadHighRisk() {
-  document.getElementById('r_age').value = 78;
-  document.getElementById('r_sbp').value = 88;
-  document.getElementById('r_dbp').value = 55;
-  document.getElementById('r_hr').value = 118;
-  document.getElementById('r_spo2').value = 91;
-  document.getElementById('r_temp').value = 38.9;
-  document.getElementById('r_rr').value = 26;
-  document.getElementById('r_bg').value = 14.2;
-  document.getElementById('r_consciousness').value = '1';
+  document.getElementById('r_age').value=78; document.getElementById('r_sbp').value=88;
+  document.getElementById('r_dbp').value=55; document.getElementById('r_hr').value=118;
+  document.getElementById('r_spo2').value=91; document.getElementById('r_temp').value=38.9;
+  document.getElementById('r_rr').value=26; document.getElementById('r_bg').value=14.2;
+  document.getElementById('r_consciousness').value='1';
 }
 
 async function scoreRisk() {
-  const payload = {
-    age: +document.getElementById('r_age').value||65,
-    systolic_bp: +document.getElementById('r_sbp').value||120,
-    diastolic_bp: +document.getElementById('r_dbp').value||80,
-    heart_rate: +document.getElementById('r_hr').value||75,
-    spo2: +document.getElementById('r_spo2').value||98,
-    temperature: +document.getElementById('r_temp').value||37,
-    respiratory_rate: +document.getElementById('r_rr').value||16,
-    blood_glucose: +document.getElementById('r_bg').value||5.5,
-    consciousness: +document.getElementById('r_consciousness').value||0
-  };
-  const result = document.getElementById('riskResult');
-  result.style.display = 'block';
-  result.innerHTML = '<span class="loading">Calculating risk score</span>';
+  const payload = { age:+document.getElementById('r_age').value||65, systolic_bp:+document.getElementById('r_sbp').value||120, diastolic_bp:+document.getElementById('r_dbp').value||80, heart_rate:+document.getElementById('r_hr').value||75, spo2:+document.getElementById('r_spo2').value||98, temperature:+document.getElementById('r_temp').value||37, respiratory_rate:+document.getElementById('r_rr').value||16, blood_glucose:+document.getElementById('r_bg').value||5.5, consciousness:+document.getElementById('r_consciousness').value||0 };
+  const result = document.getElementById('riskResult'); result.style.display='block'; result.innerHTML='<span class="loading">Calculating risk score</span>';
   try {
-    const res = await fetch(`${API}/risk/score`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    const res = await fetch(`${API}/risk/score`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     if (!res.ok) throw new Error(`Server error ${res.status}`);
     const data = await res.json();
-    const level = (data.risk_level||'unknown').toLowerCase();
-    const cls = level==='high'?'risk-high':level==='medium'?'risk-medium':'risk-low';
-    const icon = level==='high'?'🔴':level==='medium'?'🟡':'🟢';
-    let html = `<div class="risk-badge ${cls}">${icon} ${(data.risk_level||'').toUpperCase()} RISK</div>`;
-    if (data.probability) html += `<div style="font-size:13px;color:var(--muted);margin-bottom:12px">Probability: <strong style="color:var(--white)">${(data.probability*100).toFixed(1)}%</strong></div>`;
-    if (data.flags && data.flags.length) {
-      html += `<div style="font-size:12px;color:var(--muted);margin-bottom:8px">Clinical Flags:</div>`;
-      data.flags.forEach(f => { html += `<div style="font-size:12px;padding:4px 0;color:var(--text)">• ${f}</div>`; });
-    }
-    if (data.explanation) html += `<div style="margin-top:14px;font-size:13px;line-height:1.65;color:var(--text)">${data.explanation.replace(/\n/g,'<br>')}</div>`;
-    result.innerHTML = html;
-  } catch(e) {
-    result.innerHTML = `<span style="color:var(--red)">Error: ${e.message}</span>`;
-  }
+    const level=(data.risk_level||'unknown').toLowerCase(), cls=level==='high'?'risk-high':level==='medium'?'risk-medium':'risk-low', icon=level==='high'?'🔴':level==='medium'?'🟡':'🟢';
+    let html=`<div class="risk-badge ${cls}">${icon} ${(data.risk_level||'').toUpperCase()} RISK</div>`;
+    if (data.probability) html+=`<div style="font-size:13px;color:var(--muted);margin-bottom:12px">Probability: <strong style="color:var(--white)">${(data.probability*100).toFixed(1)}%</strong></div>`;
+    if (data.flags&&data.flags.length) { html+=`<div style="font-size:12px;color:var(--muted);margin-bottom:8px">Clinical Flags:</div>`; data.flags.forEach(f=>{html+=`<div style="font-size:12px;padding:4px 0;color:var(--text)">• ${f}</div>`;}); }
+    if (data.explanation) html+=`<div style="margin-top:14px;font-size:13px;line-height:1.65;color:var(--text)">${data.explanation.replace(/\n/g,'<br>')}</div>`;
+    result.innerHTML=html;
+  } catch(e) { result.innerHTML=`<span style="color:var(--red)">Error: ${e.message}</span>`; }
 }
 
 async function bookAppt() {
-  const payload = {
-    patient_name: document.getElementById('a_patient').value||'Patient',
-    doctor_name: document.getElementById('a_doctor').value||'Doctor',
-    date: document.getElementById('a_date').value,
-    time: document.getElementById('a_time').value,
-    reason: document.getElementById('a_reason').value||'Consultation'
-  };
-  const result = document.getElementById('apptResult');
-  result.style.display = 'block';
-  result.innerHTML = '<span class="loading">Booking appointment</span>';
+  const payload={patient_name:document.getElementById('a_patient').value||'Patient',doctor_name:document.getElementById('a_doctor').value||'Doctor',date:document.getElementById('a_date').value,time:document.getElementById('a_time').value,reason:document.getElementById('a_reason').value||'Consultation'};
+  const result=document.getElementById('apptResult'); result.style.display='block'; result.innerHTML='<span class="loading">Booking appointment</span>';
   try {
-    const res = await fetch(`${API}/appointments/book`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    const res=await fetch(`${API}/appointments/book`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     if (!res.ok) throw new Error(`Server error ${res.status}`);
-    const data = await res.json();
-    result.innerHTML = `✅ <strong>Appointment Booked!</strong><br><br>${(data.message||JSON.stringify(data)).replace(/\n/g,'<br>')}`;
-  } catch(e) {
-    result.innerHTML = `<span style="color:var(--red)">Error: ${e.message}</span>`;
-  }
+    const data=await res.json();
+    result.innerHTML=`✅ <strong>Appointment Booked!</strong><br><br>${(data.message||JSON.stringify(data)).replace(/\n/g,'<br>')}`;
+  } catch(e) { result.innerHTML=`<span style="color:var(--red)">Error: ${e.message}</span>`; }
 }
 
 function switchTab(tab) {
-  document.getElementById('soap-form').style.display = tab==='soap'?'block':'none';
-  document.getElementById('referral-form').style.display = tab==='referral'?'block':'none';
-  document.getElementById('tab-soap').classList.toggle('active', tab==='soap');
-  document.getElementById('tab-referral').classList.toggle('active', tab==='referral');
-  document.getElementById('notesOutput').style.display = 'none';
+  document.getElementById('soap-form').style.display=tab==='soap'?'block':'none';
+  document.getElementById('referral-form').style.display=tab==='referral'?'block':'none';
+  document.getElementById('tab-soap').classList.toggle('active',tab==='soap');
+  document.getElementById('tab-referral').classList.toggle('active',tab==='referral');
+  document.getElementById('notesOutput').style.display='none';
 }
 
 async function generateNote(type) {
-  const output = document.getElementById('notesOutput');
-  output.style.display = 'block';
-  output.textContent = 'Generating note...';
+  const output=document.getElementById('notesOutput'); output.style.display='block'; output.textContent='Generating note...';
   try {
-    let payload, endpoint;
-    if (type === 'soap') {
-      payload = { complaint: document.getElementById('n_complaint').value, age_sex: document.getElementById('n_age').value, vitals: document.getElementById('n_vitals').value };
-      endpoint = 'soap';
-    } else {
-      payload = { patient: document.getElementById('r_patient').value, specialist: document.getElementById('r_specialist').value, reason: document.getElementById('r_reason').value };
-      endpoint = 'referral';
-    }
-    const res = await fetch(`${API}/notes/${endpoint}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    let payload,endpoint;
+    if (type==='soap') { payload={complaint:document.getElementById('n_complaint').value,age_sex:document.getElementById('n_age').value,vitals:document.getElementById('n_vitals').value}; endpoint='soap'; }
+    else { payload={patient:document.getElementById('r_patient').value,specialist:document.getElementById('r_specialist').value,reason:document.getElementById('r_reason').value}; endpoint='referral'; }
+    const res=await fetch(`${API}/notes/${endpoint}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     if (!res.ok) throw new Error(`Server error ${res.status}`);
-    const data = await res.json();
-    output.textContent = data.note || data.content || JSON.stringify(data);
-  } catch(e) {
-    output.textContent = `Error: ${e.message}`;
-  }
+    const data=await res.json(); output.textContent=data.note||data.content||JSON.stringify(data);
+  } catch(e) { output.textContent=`Error: ${e.message}`; }
 }
 
 const TRIAGE_DEMOS = {
   sepsis: "67-year-old male, BP 90/55, HR 130, confused, temp 39.2°C, respiratory rate 26, SpO2 91%. Presenting with fever and weakness for 2 days. Partner says he has been getting worse. What should I do?",
-  stable: "58-year-old female, BP 158/94, HR 78, alert and oriented, temp 36.8°C, respiratory rate 15, SpO2 97%. Presenting for routine hypertension review. Taking amlodipine 5mg. No chest pain or shortness of breath.",
-  chest: "52-year-old male, BP 145/90, HR 105, diaphoretic, temp 37.1°C, respiratory rate 20, SpO2 95%. Sudden onset crushing chest pain radiating to left arm, started 45 minutes ago. History of smoking."
+  stable: "58-year-old female, BP 158/94, HR 78, alert, temp 36.8°C, RR 15, SpO2 97%. Presenting for routine hypertension review. Taking amlodipine 5mg. No chest pain.",
+  chest: "52-year-old male, BP 145/90, HR 105, diaphoretic, temp 37.1°C, RR 20, SpO2 95%. Sudden onset crushing chest pain radiating to left arm, started 45 minutes ago. History of smoking."
 };
 
-function loadTriageDemo(type) {
-  document.getElementById('triageInput').value = TRIAGE_DEMOS[type];
-}
+function loadTriageDemo(type) { document.getElementById('triageInput').value = TRIAGE_DEMOS[type]; }
 
 async function runTriage() {
   const input = document.getElementById('triageInput').value.trim();
@@ -587,6 +484,8 @@ async function runTriage() {
   document.getElementById('triageSynthesis').textContent = '';
   document.getElementById('triageSoapSection').style.display = 'none';
   document.getElementById('triageApptSection').style.display = 'none';
+  document.getElementById('triageAuditTable').style.display = 'none';
+
   try {
     const res = await fetch(`${API}/triage/analyze`, {
       method: 'POST',
@@ -595,27 +494,79 @@ async function runTriage() {
     });
     if (!res.ok) throw new Error(`Server error ${res.status}`);
     const data = await res.json();
-    document.getElementById('triageTrace').innerHTML = (data.trace || []).map(t => `<div>${t}</div>`).join('');
+
+    // Trace with color coding
+    document.getElementById('triageTrace').innerHTML = (data.trace || []).map(t => {
+      if (t.startsWith('─') || t.includes('──')) return `<div style="color:var(--border);border-top:1px solid var(--border);margin:4px 0"></div>`;
+      if (t.includes('TOTAL COST') || t.includes('TOTAL TIME') || t.includes('NODES RUN')) return `<div style="color:var(--gold);font-weight:600">${t}</div>`;
+      if (t.includes('Triage complete')) return `<div style="color:var(--green);font-weight:600">${t}</div>`;
+      if (t.startsWith('   └─')) return `<div style="color:var(--muted);padding-left:16px">${t}</div>`;
+      return `<div>${t}</div>`;
+    }).join('');
+
+    // Risk badge
     const level = (data.risk_level || 'UNKNOWN').toUpperCase();
-    const cls = level === 'HIGH' ? 'risk-high' : level === 'MEDIUM' ? 'risk-medium' : 'risk-low';
-    const icon = level === 'HIGH' ? '🔴' : level === 'MEDIUM' ? '🟡' : '🟢';
+    const cls = level==='HIGH'?'risk-high':level==='MEDIUM'?'risk-medium':'risk-low';
+    const icon = level==='HIGH'?'🔴':level==='MEDIUM'?'🟡':'🟢';
     let badgeHtml = `<div class="risk-badge ${cls}">${icon} ${level} RISK — ${(data.risk_probability*100).toFixed(1)}% probability</div>`;
     if (data.risk_flags && data.risk_flags.length) {
-      badgeHtml += `<div style="font-size:12px;color:var(--muted);margin-bottom:4px">Clinical flags:</div>`;
+      badgeHtml += `<div style="font-size:12px;color:var(--muted);margin-top:8px;margin-bottom:4px">Clinical flags — NEWS2 protocol (Royal College of Physicians 2017):</div>`;
       data.risk_flags.forEach(f => { badgeHtml += `<div style="font-size:12px;padding:3px 0;color:var(--text)">• ${f}</div>`; });
     }
     document.getElementById('triageRiskBadge').innerHTML = badgeHtml;
+
+    // Synthesis
     document.getElementById('triageSynthesis').textContent = data.synthesis || '';
+
+    // SOAP
     if (data.soap_note) {
       document.getElementById('triageSoapSection').style.display = 'block';
       document.getElementById('triageSoap').textContent = data.soap_note;
     }
+
+    // Appointment
     if (data.appointment_booked) {
       document.getElementById('triageApptSection').style.display = 'block';
       document.getElementById('triageAppt').textContent = data.high_risk_actions_taken
-        ? '✅ Urgent follow-up appointment scheduled via Google Calendar. Confirmation sent via Gmail.'
+        ? '✅ Urgent follow-up scheduled via Google Calendar MCP. Confirmation sent via Gmail.'
         : 'Appointment booking attempted.';
     }
+
+    // AUDIT TABLE
+    if (data.audit && data.audit.length) {
+      const auditDiv = document.getElementById('triageAuditTable');
+      auditDiv.style.display = 'block';
+      let rows = data.audit.map(a => `
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:9px 12px;color:var(--white);font-weight:600;white-space:nowrap">${a.icon||''} ${a.node}</td>
+          <td style="padding:9px 12px;color:var(--teal);font-family:'JetBrains Mono',monospace;white-space:nowrap">${a.time_s}s</td>
+          <td style="padding:9px 12px;color:var(--muted);font-size:11px">${a.model||''}</td>
+          <td style="padding:9px 12px;color:var(--gold);font-family:'JetBrains Mono',monospace;white-space:nowrap">$${(a.cost_usd||0).toFixed(5)}</td>
+          <td style="padding:9px 12px;color:var(--text);font-size:11px">${a.detail||''}</td>
+        </tr>`).join('');
+      const totalCost = data.audit.reduce((s,a)=>s+(a.cost_usd||0),0).toFixed(5);
+      const totalTime = data.audit.reduce((s,a)=>s+(a.time_s||0),0).toFixed(2);
+      rows += `<tr style="border-top:2px solid var(--teal)">
+        <td style="padding:9px 12px;color:var(--gold);font-weight:700">TOTAL</td>
+        <td style="padding:9px 12px;color:var(--gold);font-family:'JetBrains Mono',monospace;font-weight:700">${totalTime}s</td>
+        <td style="padding:9px 12px;color:var(--muted);font-size:11px">${data.audit.length} nodes</td>
+        <td style="padding:9px 12px;color:var(--gold);font-family:'JetBrains Mono',monospace;font-weight:700">$${totalCost}</td>
+        <td style="padding:9px 12px;color:var(--muted);font-size:11px">End-to-end audit complete</td>
+      </tr>`;
+      auditDiv.innerHTML = `
+        <div style="font-size:12px;color:var(--muted);letter-spacing:1px;margin-bottom:14px">🔍 FULL AUDIT TRAIL — Every step tracked for transparency</div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead><tr style="border-bottom:1px solid var(--border)">
+            <th style="padding:7px 12px;color:var(--muted);text-align:left;font-weight:500">Node</th>
+            <th style="padding:7px 12px;color:var(--muted);text-align:left;font-weight:500">Time</th>
+            <th style="padding:7px 12px;color:var(--muted);text-align:left;font-weight:500">Model</th>
+            <th style="padding:7px 12px;color:var(--muted);text-align:left;font-weight:500">Cost</th>
+            <th style="padding:7px 12px;color:var(--muted);text-align:left;font-weight:500">Detail</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    }
+
   } catch(e) {
     document.getElementById('triageTrace').innerHTML = `<span style="color:var(--red)">⚠️ Error: ${e.message}</span>`;
   }
