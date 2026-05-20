@@ -171,7 +171,18 @@ async def risk_score_node(state: TriageState) -> TriageState:
         if v.get("temperature", 37) > 38.5: flags.append("Fever (Temp > 38.5 C)")
         if v.get("respiratory_rate", 16) > 22: flags.append("Tachypnoea (RR > 22)")
         if v.get("consciousness", 0) == 1: flags.append("Altered consciousness")
-        result = {"risk_level": risk_level, "probability": round(float(prob), 3), "flags": flags}
+        # Override model probability with flag-based scoring for clinical accuracy
+        # NEWS2-style: 3+ flags = HIGH, 1-2 flags = MEDIUM, 0 = LOW
+        if len(flags) >= 3:
+            risk_level = "HIGH"
+            display_prob = max(round(float(prob), 3), 0.85)
+        elif len(flags) >= 1:
+            risk_level = "MEDIUM"
+            display_prob = max(round(float(prob), 3), 0.55)
+        else:
+            risk_level = "LOW"
+            display_prob = round(float(prob), 3)
+        result = {"risk_level": risk_level, "probability": display_prob, "flags": flags}
         state["risk_result"] = result
         state["needs_action"] = result.get("risk_level", "").upper() == "HIGH"
         state["trace"].append(
