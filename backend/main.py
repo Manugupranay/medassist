@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import uvicorn
 
-from routers import chat, risk, appointments, notes, triage
+from routers import chat, risk, appointments, notes, triage, multi_agent
 from services.rag_service import RAGService
 from services.ml_service import MLService
 
@@ -44,6 +44,7 @@ app.add_middleware(
 app.include_router(chat.router,         prefix="/api/chat",         tags=["Clinical Q&A (RAG + LLM)"])
 app.include_router(risk.router,         prefix="/api/risk",         tags=["Risk Scoring (ML)"])
 app.include_router(appointments.router, prefix="/api/appointments", tags=["Appointments (MCP)"])
+app.include_router(multi_agent.router, prefix="/api/multiagent", tags=["Multi-Agent System"])
 app.include_router(triage.router, prefix="/api/triage", tags=["Clinical Triage Agent (LangGraph)"])
 app.include_router(notes.router,        prefix="/api/notes",        tags=["Clinical Notes (LLM)"])
 
@@ -57,6 +58,8 @@ async def health():
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+
+
 
 
 
