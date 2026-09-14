@@ -75,3 +75,19 @@ async def llm_service_error_handler(request: Request, exc: LLMServiceError):
 
 
 @app.get("/")
+async def root():
+    return {"status": "ok", "service": "MedAssist AI", "version": "1.0.0"}
+
+
+@app.get("/health")
+async def health():
+    return {"status": "healthy"}
+
+
+if __name__ == "__main__":
+    # Loopback by default. Set HOST=0.0.0.0 explicitly when the server needs
+    # to be reachable from outside the machine (containers, LAN testing).
+    host = os.getenv("HOST", "127.0.0.1")
+    port = int(os.getenv("PORT", "8000"))
+    reload_enabled = os.getenv("RELOAD", "true").strip().lower() == "true"
+    uvicorn.run("main:app", host=host, port=port, reload=reload_enabled)
