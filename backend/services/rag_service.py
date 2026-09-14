@@ -10,8 +10,15 @@ import json
 from pathlib import Path
 from typing import List, Dict, Any
 
-CHROMA_AVAILABLE = False
+try:
+    import chromadb
+    from chromadb.utils import embedding_functions
 
+    CHROMA_AVAILABLE = True
+except ImportError:  # pragma: no cover - optional dependency
+    chromadb = None
+    embedding_functions = None
+    CHROMA_AVAILABLE = False
 # ── Medical Knowledge Base ───────────────────────────────────────
 # In production: ingest real PDFs, drug databases, clinical guidelines.
 # Here we seed with high-quality structured medical knowledge.
@@ -130,21 +137,40 @@ class RAGService:
         self._keyword_index: List[Dict] = []
 
     async def initialize(self):
+        """Bring the vector store up, degrading to keyword search on failure.
+
+        The keyword index is always populated so retrieval keeps working even
+        when ChromaDB is unavailable or fails part-way through start-up.
+        """
+        self._keyword_index = MEDICAL_KNOWLEDGE
+
         if self.use_chroma:
-            self._init_chroma()
+            try:
+                self._init_chroma()
+            except Exception as exc:  # noqa: BLE001 - degrade, never crash start-up
+                print(f"⚠️  ChromaDB init failed ({exc}) — using keyword fallback search")
+                self.use_chroma = False
+                self.client = None
+                self.collection = None
         else:
-            print("⚠️  ChromaDB not found — using keyword fallback search")
-            self._keyword_index = MEDICAL_KNOWLEDGE
-        print(f"📚 RAG service ready — {len(MEDICAL_KNOWLEDGE)} knowledge chunks loaded")
+            print("⚠️  ChromaDB not installed — using keyword fallback search")
+
+        backend = "ChromaDB" if self.use_chroma else "keyword"
+        print(f"📚 RAG service ready — {len(MEDICAL_KNOWLEDGE)} chunks loaded ({backend})")
 
     def _init_chroma(self):
         self.client = chromadb.Client()
         ef = embedding_functions.DefaultEmbeddingFunction()
-        self.collection = self.client.create_collection(
+        # get_or_create keeps re-initialisation (tests, hot reload) idempotent.
+        self.collection = self.client.get_or_create_collection(
             name="medical_knowledge",
             embedding_function=ef,
             metadata={"hnsw:space": "cosine"},
         )
+        if self.collection.count() == 0:
+            self._seed_collection()
+
+    def _seed_collection(self):
         self.collection.add(
             ids=[doc["id"] for doc in MEDICAL_KNOWLEDGE],
             documents=[doc["content"] for doc in MEDICAL_KNOWLEDGE],
@@ -182,4 +208,16 @@ class RAGService:
                     "score": round(overlap / max(len(query_words), 1), 3),
                 })
         scored.sort(key=lambda x: x["score"], reverse=True)
-        return scored[:top_k] if scored else [self._keyword_index[0]]
+        if scored:
+            return scored[:top_k]
+        # No keyword overlap: fall back to the first chunk as weak context,
+        # or return nothing at all if the index was never populated.
+        if not self._keyword_index:
+            return []
+        first = self._keyword_index[0]
+        return [{
+            "content": first["content"],
+            "source": first["source"],
+            "category": first["category"],
+            "score": 0.0,
+        }]
