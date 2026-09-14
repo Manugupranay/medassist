@@ -98,12 +98,21 @@ class MLService:
         if not self.available:
             print("⚠️  scikit-learn not installed — ML risk scoring disabled")
             return
-        if MODEL_PATH.exists():
-            with open(MODEL_PATH, "rb") as f:
-                self.pipeline = pickle.load(f)
-            print("🤖 Risk model loaded from cache")
-        else:
+        if not MODEL_PATH.exists():
             self._train_and_save()
+            return
+
+        try:
+            with open(MODEL_PATH, "rb") as f:
+                # Trusted local artefact: this file is written by
+                # _train_and_save() below and is never user-supplied.
+                self.pipeline = pickle.load(f)  # nosec B301
+        except Exception as exc:  # noqa: BLE001 - a bad cache must not be fatal
+            print(f"⚠️  Cached risk model unusable ({exc}) — retraining")
+            self.pipeline = None
+            self._train_and_save()
+        else:
+            print("🤖 Risk model loaded from cache")
 
     def _train_and_save(self):
         print("🏋️  Training risk classifier on synthetic data...")
