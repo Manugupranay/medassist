@@ -3,8 +3,9 @@ MedAssist AI — FastAPI Backend
 Production-grade medical AI with RAG + LLM + ML + MCP
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 import os
 
@@ -12,6 +13,7 @@ import uvicorn
 
 from routers import chat, risk, appointments, notes, triage, multi_agent
 from services.rag_service import RAGService
+from services.llm_service import LLMServiceError
 from services.ml_service import MLService
 
 # ── Startup / Shutdown ──────────────────────────────────────────
@@ -58,24 +60,18 @@ app.include_router(multi_agent.router, prefix="/api/multiagent", tags=["Multi-Ag
 app.include_router(triage.router, prefix="/api/triage", tags=["Clinical Triage Agent (LangGraph)"])
 app.include_router(notes.router,        prefix="/api/notes",        tags=["Clinical Notes (LLM)"])
 
+
+@app.exception_handler(LLMServiceError)
+async def llm_service_error_handler(request: Request, exc: LLMServiceError):
+    """Surface upstream LLM failures as 502 with a readable reason.
+
+    Without this, a timeout or rate limit from the Anthropic API reaches the
+    caller as a bare 500 and the actual cause is only visible in the logs.
+    """
+    return JSONResponse(
+        status_code=502,
+        content={"detail": str(exc), "service": "anthropic"},
+    )
+
+
 @app.get("/")
-async def root():
-    return {"status": "ok", "service": "MedAssist AI", "version": "1.0.0"}
-
-@app.get("/health")
-async def health():
-    return {"status": "healthy"}
-
-if __name__ == "__main__":
-    # Loopback by default. Set HOST=0.0.0.0 explicitly when the server needs
-    # to be reachable from outside the machine (containers, LAN testing).
-    host = os.getenv("HOST", "127.0.0.1")
-    port = int(os.getenv("PORT", "8000"))
-    reload_enabled = os.getenv("RELOAD", "true").strip().lower() == "true"
-    uvicorn.run("main:app", host=host, port=port, reload=reload_enabled)
-
-
-
-
-
-
