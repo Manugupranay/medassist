@@ -7,6 +7,7 @@ Handles all generative AI tasks:
   - Drug interaction explanations
 """
 
+import asyncio
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -17,6 +18,22 @@ from typing import List, Dict, Any, AsyncIterator
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 CLAUDE_MODEL      = "claude-sonnet-4-20250514"
 API_URL           = "https://api.anthropic.com/v1/messages"
+
+# Transport tuning. Overridable so a slow or flaky network does not mean
+# editing source.
+REQUEST_TIMEOUT = float(os.getenv("LLM_TIMEOUT_SECONDS", "60"))
+MAX_ATTEMPTS = max(1, int(os.getenv("LLM_MAX_ATTEMPTS", "3")))
+BACKOFF_SECONDS = float(os.getenv("LLM_BACKOFF_SECONDS", "1"))
+
+# Statuses worth a second try: rate limits and transient upstream faults.
+RETRYABLE_STATUS = {408, 409, 429, 500, 502, 503, 504}
+
+
+class LLMServiceError(RuntimeError):
+    """The Anthropic API could not produce an answer.
+
+    Carries a message safe to show a caller: no API keys, no stack traces.
+    """
 
 SYSTEM_PROMPT = """You are MedAssist AI, a clinical decision support system designed to assist qualified healthcare professionals. 
 
@@ -136,15 +153,80 @@ Mention which parameters are driving the risk score and suggest immediate clinic
         ])
 
     async def _call_api(self, messages: List[Dict]) -> str:
+        """Call the Anthropic API, retrying transient failures.
+
+        Raises:
+            LLMServiceError: on a missing key, an exhausted retry budget, a
+                non-retryable API error, or a response we cannot parse.
+        """
+        if not ANTHROPIC_API_KEY:
+            raise LLMServiceError(
+                "ANTHROPIC_API_KEY is not set - copy backend/.env.example to "
+                "backend/.env and add your key"
+            )
+
         payload = {
             "model": CLAUDE_MODEL,
             "max_tokens": 1500,
             "system": SYSTEM_PROMPT,
             "messages": messages,
         }
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            resp = await client.post(API_URL, headers=self.headers, json=payload)
-            resp.raise_for_status()
-            data = resp.json()
-            return data["content"][0]["text"]
+
+        last_error = "the Anthropic API did not respond"
+
+        async with httpx.AsyncClient(timeout=REQUEST_TIMEOUT) as client:
+            for attempt in range(1, MAX_ATTEMPTS + 1):
+                try:
+                    response = await client.post(
+                        API_URL, headers=self.headers, json=payload
+                    )
+                except httpx.TimeoutException:
+                    last_error = (
+                        f"the Anthropic API timed out after {REQUEST_TIMEOUT:.0f}s"
+                    )
+                except httpx.RequestError as exc:
+                    last_error = (
+                        "could not reach the Anthropic API "
+                        f"({exc.__class__.__name__})"
+                    )
+                else:
+                    if response.status_code < 400:
+                        return self._extract_text(response)
+
+                    last_error = self._describe_http_error(response)
+                    # 4xx other than rate limiting will fail the same way
+                    # every time, so fail fast instead of burning retries.
+                    if response.status_code not in RETRYABLE_STATUS:
+                        raise LLMServiceError(last_error)
+
+                if attempt < MAX_ATTEMPTS:
+                    await asyncio.sleep(BACKOFF_SECONDS * 2 ** (attempt - 1))
+
+        raise LLMServiceError(f"{last_error} (after {MAX_ATTEMPTS} attempts)")
+
+    @staticmethod
+    def _extract_text(response: httpx.Response) -> str:
+        """Pull the assistant text out of a successful API response."""
+        try:
+            blocks = response.json()["content"]
+            text = "".join(
+                block["text"] for block in blocks if block.get("type") == "text"
+            )
+        except (ValueError, KeyError, TypeError) as exc:
+            raise LLMServiceError(
+                f"unexpected response shape from the Anthropic API ({exc})"
+            ) from exc
+
+        if not text.strip():
+            raise LLMServiceError("the Anthropic API returned an empty answer")
+        return text
+
+    @staticmethod
+    def _describe_http_error(response: httpx.Response) -> str:
+        """Turn an error response into one readable line."""
+        try:
+            detail = response.json()["error"]["message"]
+        except (ValueError, KeyError, TypeError):
+            detail = response.text[:200].strip() or response.reason_phrase
+        return f"Anthropic API returned {response.status_code}: {detail}"
 
