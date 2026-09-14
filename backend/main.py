@@ -6,6 +6,8 @@ Production-grade medical AI with RAG + LLM + ML + MCP
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+import os
+
 import uvicorn
 
 from routers import chat, risk, appointments, notes, triage, multi_agent
@@ -32,9 +34,17 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Comma-separated allowlist; "*" stays the default for local development but
+# should be pinned to real origins in any deployed environment.
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv("ALLOWED_ORIGINS", "*").split(",")
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -57,7 +67,12 @@ async def health():
     return {"status": "healthy"}
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    # Loopback by default. Set HOST=0.0.0.0 explicitly when the server needs
+    # to be reachable from outside the machine (containers, LAN testing).
+    host = os.getenv("HOST", "127.0.0.1")
+    port = int(os.getenv("PORT", "8000"))
+    reload_enabled = os.getenv("RELOAD", "true").strip().lower() == "true"
+    uvicorn.run("main:app", host=host, port=port, reload=reload_enabled)
 
 
 
